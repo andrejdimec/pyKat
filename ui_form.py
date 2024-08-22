@@ -52,12 +52,12 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.top_layout = QHBoxLayout()
         self.top_layout.setObjectName(u"top_layout")
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.top_layout.setContentsMargins(10, -1, -1, -1)
+        self.label_wks = QLabel(self.centralwidget)
+        self.label_wks.setObjectName(u"label_wks")
 
-        self.top_layout.addLayout(self.horizontalLayout_3)
+        self.top_layout.addWidget(self.label_wks)
 
-        self.top_layout.setStretch(0, 2)
 
         self.verticalLayout.addLayout(self.top_layout)
 
@@ -98,24 +98,34 @@ class Ui_MainWindow(object):
         self.textEdit_2.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_hs_aglo = QPushButton(self.frame_2)
         self.btn_hs_aglo.setObjectName(u"btn_hs_aglo")
-        self.btn_hs_aglo.setGeometry(QRect(10, 90, 131, 40))
+        self.btn_hs_aglo.setGeometry(QRect(10, 140, 131, 40))
         self.btn_hs_aglo.setMinimumSize(QSize(100, 40))
         self.textEdit_3 = QTextEdit(self.frame_2)
         self.textEdit_3.setObjectName(u"textEdit_3")
-        self.textEdit_3.setGeometry(QRect(150, 90, 221, 41))
+        self.textEdit_3.setGeometry(QRect(150, 140, 221, 41))
         self.textEdit_3.setFont(font1)
         self.textEdit_3.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_3.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_prenesi_hs = QPushButton(self.frame_2)
         self.btn_prenesi_hs.setObjectName(u"btn_prenesi_hs")
-        self.btn_prenesi_hs.setGeometry(QRect(10, 140, 131, 40))
+        self.btn_prenesi_hs.setGeometry(QRect(10, 90, 131, 40))
         self.btn_prenesi_hs.setMinimumSize(QSize(100, 40))
         self.textEdit_4 = QTextEdit(self.frame_2)
         self.textEdit_4.setObjectName(u"textEdit_4")
-        self.textEdit_4.setGeometry(QRect(150, 140, 221, 41))
+        self.textEdit_4.setGeometry(QRect(150, 90, 221, 41))
         self.textEdit_4.setFont(font1)
         self.textEdit_4.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_4.setFrameShadow(QFrame.Shadow.Sunken)
+        self.btn_brisi_hs = QPushButton(self.frame_2)
+        self.btn_brisi_hs.setObjectName(u"btn_brisi_hs")
+        self.btn_brisi_hs.setGeometry(QRect(10, 190, 131, 40))
+        self.btn_brisi_hs.setMinimumSize(QSize(100, 40))
+        self.textEdit_5 = QTextEdit(self.frame_2)
+        self.textEdit_5.setObjectName(u"textEdit_5")
+        self.textEdit_5.setGeometry(QRect(150, 190, 221, 41))
+        self.textEdit_5.setFont(font1)
+        self.textEdit_5.setFrameShape(QFrame.Shape.NoFrame)
+        self.textEdit_5.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.center_left_layout.addWidget(self.frame_2)
 
@@ -227,6 +237,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Kataster", None))
+        self.label_wks.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"ArcGis Desktop", None))
         self.btn_om_arcgis_table.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis", None))
         self.textEdit_2.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -236,7 +247,7 @@ class Ui_MainWindow(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Odjemna mesta iz Bass prenesi v tabelo v ArcGis Online</p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Odjemna mesta iz Bass prenesi v ArcGis</p></body></html>", None))
         self.btn_hs_aglo.setText(QCoreApplication.translate("MainWindow", u"Aglo -> Hs", None))
         self.textEdit_3.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
@@ -255,6 +266,15 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">S portala Geoserver prenesi nove hi\u0161ne \u0161tevilke in jih shrani v kataster</p></body></html>", None))
+        self.btn_brisi_hs.setText(QCoreApplication.translate("MainWindow", u"Bri\u0161i H\u0160", None))
+        self.textEdit_5.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Zbri\u0161i hi\u0161ne \u0161tevilke, ki niso v ob\u010dinah Radgona, Apa\u010de, Radenci</p></body></html>", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"ArcGis Online", None))
         self.btn_om_arcgis_ol.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis OL", None))
         self.btn_aglo_om.setText(QCoreApplication.translate("MainWindow", u"Aglo ->OM OL", None))

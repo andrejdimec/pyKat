@@ -6,23 +6,26 @@ wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
 
 # Baze podatkov
 # MS SQL baza
-msdbhost = '213.250.28.186'
-msdbport = '1433'
-msdbuser = 'sa'
-msdbpass = 'Pl@n3tSQL'
-msdbname = 'Komunala_DB'
+msdbhost = "213.250.28.186"
+msdbport = "1433"
+msdbuser = "sa"
+msdbpass = "Pl@n3tSQL"
+msdbname = "Komunala_DB"
 
 # MYSQL baza
-mydbhost = '213.250.28.186'
+mydbhost = "213.250.28.186"
 mydbport = 3306
-mydbuser = 'dimec'
-mydbpass = '6iXrN6J8@J'
-mydbname = 'radgona'
+mydbuser = "dimec"
+mydbpass = "6iXrN6J8@J"
+mydbname = "radgona"
 
 # Razno
 verzija = "27.6.2024 py"
 obcinaId = 29
-obcinaMid = 11026826
+obcina_radgona = 11026826
+obcina_apace = 21436437
+obcina_radenci = 11027253
+obcina_jurij = 11027423
 x_brez_hs = 576683
 y_brez_hs = 171374
 

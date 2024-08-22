@@ -7,6 +7,8 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtGui import Qt
 from PySide6.QtCore import Slot
+
+import vars
 from ui_form import Ui_MainWindow
 from logger import Logger
 from comm import Comm
@@ -14,6 +16,7 @@ from comm import Comm
 from aglo_hs import AgloHs
 from om_v_arcgis import OmArcgis
 from prenesi_hs import HsArcgis
+from brisi_hs_izven import BrisiHs
 
 
 class MainWindow(QMainWindow):
@@ -23,25 +26,36 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.comm.signalText[str, Qt.GlobalColor].connect(self.izpis_v_text_box)
+
+        # odzivi na klike
         self.ui.btn_konec.clicked.connect(konec)
         self.ui.btn_om_arcgis_table.clicked.connect(self.odjemna_arcgis)
         self.ui.btn_prenesi_hs.clicked.connect(self.prenesi_hs)
         # self.ui.btn_porocilo_voda.clicked.connect(self.porocilo_voda)
         self.ui.btn_hs_aglo.clicked.connect(self.aglo_hs)
+        self.ui.btn_brisi_hs.clicked.connect(self.brisi_hs)
+
+        # Logger
         self.logWindow = self.ui.textEdit
         self.logger = Logger(comm=self.comm)
 
         self.aglohs = AgloHs(comm=self.comm)
         self.omarcgis = OmArcgis(comm=self.comm)
         self.hsarcgis = HsArcgis(comm=self.comm)
+        self.brisihs = BrisiHs(comm=self.comm)
 
+        self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
         # self.napolni_om_fc()
         # self.odjemna_arcgis()
         # self.prenesi_hs()
+        # self.brisi_hs()
 
     def prenesi_hs(self):
         self.hsarcgis.prenesi_hs()
         # print("prenesi_hs")
+
+    def brisi_hs(self):
+        self.brisihs.brisi_hs()
 
     def keyPressEvent(self, e):
         print("Keypress event", e)
@@ -60,7 +74,7 @@ class MainWindow(QMainWindow):
 
     def aglo_hs(self):
         self.aglohs.agloVoda()
-        self.aglohs.agloKan()
+        # self.aglohs.agloKan()
 
 
 def konec():

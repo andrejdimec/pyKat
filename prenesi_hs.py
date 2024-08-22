@@ -12,20 +12,20 @@ green = vars.darkGreen
 blue = vars.darkBlue
 err = vars.red
 
-# # Spodaj levo
-# x1='15.8821'
-# y1='46.5813'
-#
-# # Zgoraj desno
-# x2='16.0373'
-# y2='46.6881'
-
 # Spodaj levo
-x1 = "15.9507"
-y1 = "46.6806"
+x1 = "15.7884"
+y1 = "46.5034"
+
 # Zgoraj desno
-x2 = "15.9598"
-y2 = "46.6836"
+x2 = "16.1062"
+y2 = "46.7325"
+
+# # Spodaj levo
+# x1 = "15.9507"
+# y1 = "46.6806"
+# # Zgoraj desno
+# x2 = "15.9720"
+# y2 = "46.6936"
 
 
 def convert_to_slovenia_grid(lat, lon):
@@ -161,7 +161,7 @@ class HsArcgis(Comm):
                 edit.stopOperation()
 
         edit.stopEditing(True)
-        razlika = int(starih_zapisov[0]) - novih_zapisov
+        razlika = novih_zapisov - int(starih_zapisov[0])
         self.presledek()
 
         self.log(f"Prejšnje stanje: {starih_zapisov} hišnih številk.")

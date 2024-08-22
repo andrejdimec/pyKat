@@ -1,11 +1,23 @@
 import arcpy
 from arcpy import env
-
+import time
 from logger import Logger
 from comm import Comm
 import vars
 
 black = vars.black
+red = vars.darkRed
+green = vars.darkGreen
+blue = vars.darkBlue
+err = vars.red
+
+
+def stop(st):
+    end_time = time.time()
+    elapsed_time = end_time - st
+    m = int(elapsed_time / 60)
+    s = int(elapsed_time % 60)
+    return m, s
 
 
 class AgloHs:
@@ -20,10 +32,10 @@ class AgloHs:
         self.logger.izpisi(in_str, barva)
 
     def agloVoda(self):
-
-        self.log("Aglomeracije zapiši v tabelo s hišnimi številkami", vars.darkBlue)
+        start_time = time.time()
+        self.log("V tabelo s hišnimi številkami vpiši prave aglomeracije", green)
         self.log("", black)
-        self.log("Aglomeracije pitna voda", vars.darkGreen)
+        self.log("Aglomeracije pitna voda", blue)
 
         self.log("", black)
 
@@ -96,12 +108,11 @@ class AgloHs:
             except Exception as e:
                 self.log("Error: " + e.args[0], v.red)
 
-    # Konec agloVoda
+        # Konec agloVoda
 
-    # Zapiši v bazo s hišnimi številkami v katero aglomeracijo spadajo
-    def agloKan(self):
+        # Zapiši v bazo s hišnimi številkami v katero aglomeracijo spadajo
         self.log("", black)
-        self.log("Aglomeracije kanalizacija", v.darkGreen)
+        self.log("Aglomeracije kanalizacija", blue)
         self.log("", black)
 
         agloK = []
@@ -172,8 +183,10 @@ class AgloHs:
                 arcpy.CalculateField_management(fc_hs_selected, "aglok", aglo)
 
             except Exception as e:
-                self.log("Error: " + e.args[0], v.red)
+                self.log("Error: " + e.args[0], err)
         self.log("", black)
-        self.log('Končano.', v.darkRed)
-        self.log("", black)
+
+        minutes, seconds = stop(start_time)
+        self.log(f"Končano v {minutes} min {seconds} sek.", blue)
+
     # Konec agloKan

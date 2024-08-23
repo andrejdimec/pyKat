@@ -442,7 +442,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;V datoteko s HŠ vpiši število prebivalcev iz CRP Excel (polja: hsmid,stalno, zacasno)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="btn_brisi_hs_2">
+            <widget class="QPushButton" name="btn_preb">
              <property name="geometry">
               <rect>
                <x>10</x>

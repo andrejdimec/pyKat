@@ -89,7 +89,7 @@ class Ui_MainWindow(object):
         self.btn_om_arcgis_table.setMinimumSize(QSize(100, 40))
         self.textEdit_2 = QTextEdit(self.frame_2)
         self.textEdit_2.setObjectName(u"textEdit_2")
-        self.textEdit_2.setGeometry(QRect(150, 40, 221, 41))
+        self.textEdit_2.setGeometry(QRect(150, 40, 271, 41))
         font1 = QFont()
         font1.setFamilies([u"Inter"])
         font1.setPointSize(9)
@@ -102,7 +102,7 @@ class Ui_MainWindow(object):
         self.btn_hs_aglo.setMinimumSize(QSize(100, 40))
         self.textEdit_3 = QTextEdit(self.frame_2)
         self.textEdit_3.setObjectName(u"textEdit_3")
-        self.textEdit_3.setGeometry(QRect(150, 140, 221, 41))
+        self.textEdit_3.setGeometry(QRect(150, 140, 271, 41))
         self.textEdit_3.setFont(font1)
         self.textEdit_3.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_3.setFrameShadow(QFrame.Shadow.Sunken)
@@ -112,7 +112,7 @@ class Ui_MainWindow(object):
         self.btn_prenesi_hs.setMinimumSize(QSize(100, 40))
         self.textEdit_4 = QTextEdit(self.frame_2)
         self.textEdit_4.setObjectName(u"textEdit_4")
-        self.textEdit_4.setGeometry(QRect(150, 90, 221, 41))
+        self.textEdit_4.setGeometry(QRect(150, 90, 271, 41))
         self.textEdit_4.setFont(font1)
         self.textEdit_4.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_4.setFrameShadow(QFrame.Shadow.Sunken)
@@ -122,10 +122,20 @@ class Ui_MainWindow(object):
         self.btn_brisi_hs.setMinimumSize(QSize(100, 40))
         self.textEdit_5 = QTextEdit(self.frame_2)
         self.textEdit_5.setObjectName(u"textEdit_5")
-        self.textEdit_5.setGeometry(QRect(150, 190, 221, 41))
+        self.textEdit_5.setGeometry(QRect(150, 190, 271, 41))
         self.textEdit_5.setFont(font1)
         self.textEdit_5.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_5.setFrameShadow(QFrame.Shadow.Sunken)
+        self.textEdit_6 = QTextEdit(self.frame_2)
+        self.textEdit_6.setObjectName(u"textEdit_6")
+        self.textEdit_6.setGeometry(QRect(150, 240, 271, 41))
+        self.textEdit_6.setFont(font1)
+        self.textEdit_6.setFrameShape(QFrame.Shape.NoFrame)
+        self.textEdit_6.setFrameShadow(QFrame.Shadow.Sunken)
+        self.btn_preb = QPushButton(self.frame_2)
+        self.btn_preb.setObjectName(u"btn_preb")
+        self.btn_preb.setGeometry(QRect(10, 240, 131, 40))
+        self.btn_preb.setMinimumSize(QSize(100, 40))
 
         self.center_left_layout.addWidget(self.frame_2)
 
@@ -176,6 +186,9 @@ class Ui_MainWindow(object):
 
         self.center_left_layout.addWidget(self.frame_3)
 
+        self.center_left_layout.setStretch(0, 10)
+        self.center_left_layout.setStretch(1, 5)
+        self.center_left_layout.setStretch(2, 3)
 
         self.center_layout.addLayout(self.center_left_layout)
 
@@ -275,6 +288,15 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Zbri\u0161i hi\u0161ne \u0161tevilke, ki niso v ob\u010dinah Radgona, Apa\u010de, Radenci</p></body></html>", None))
+        self.textEdit_6.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">V datoteko s H\u0160 vpi\u0161i \u0161tevilo prebivalcev iz CRP Excel (polja: hsmid,stalno, zacasno)</p></body></html>", None))
+        self.btn_preb.setText(QCoreApplication.translate("MainWindow", u"Prebivalci v H\u0160", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"ArcGis Online", None))
         self.btn_om_arcgis_ol.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis OL", None))
         self.btn_aglo_om.setText(QCoreApplication.translate("MainWindow", u"Aglo ->OM OL", None))

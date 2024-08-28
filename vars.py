@@ -21,7 +21,7 @@ mydbname = "radgona"
 
 # Razno
 verzija = "27.6.2024 py"
-obcinaId = 29
+obcina_radgona_id = 29
 obcina_radgona = 11026826
 obcina_apace = 21436437
 obcina_radenci = 11027253

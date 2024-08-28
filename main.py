@@ -8,8 +8,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import Qt
 from PySide6.QtCore import Slot
-import openpyxl
-from openpyxl import load_workbook
 
 
 import vars
@@ -21,6 +19,7 @@ from aglo_hs import AgloHs
 from om_v_arcgis import OmArcgis
 from prenesi_hs import HsArcgis
 from brisi_hs_izven import BrisiHs
+from prebivalci_v_hs import PrebivalciHs
 
 
 class MsgBox(QMessageBox):
@@ -69,6 +68,7 @@ class MainWindow(QMainWindow):
         self.omarcgis = OmArcgis(comm=self.comm)
         self.hsarcgis = HsArcgis(comm=self.comm)
         self.brisihs = BrisiHs(comm=self.comm)
+        self.prebivalcihs = PrebivalciHs(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
 
@@ -79,51 +79,16 @@ class MainWindow(QMainWindow):
         self.vpisi_prebivalce()
 
     def vpisi_prebivalce(self):
-        print("vpisi_prebivalce")
-        filename = "d:/podatki/crp.xlsx"
-        print(filename)
-        workbook = load_workbook(filename)
-        sheet = workbook.active
-        seznam = []
-        # crp = [[1, 1, 1], [2, 2, 2]]
-        crp = []  # prečiščeni seznam z združenimi hsmid
-        # Get the column indices for the specified headings
-        header = {cell.value: cell.column for cell in sheet[1]}
-        hsmid_col = header["hsmid"]
-        stalno_col = header["stalno"]
-        zacasno_col = header["zacasno"]
-
-        # Iterate over the rows, skipping the header row
-        for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
-            hsmid_value = row[hsmid_col - 1].value
-            stalno_value = row[stalno_col - 1].value
-            zacasno_value = row[zacasno_col - 1].value
-            seznam.append([hsmid_value, stalno_value, zacasno_value])
-
-        # Print the list to verify the values
-        # print("Seznam:", seznam)
-
-        print("Vrstic v seznam[] " + str(len(seznam)))
-
-        for row in seznam:
-            hsmid_isci = row[0]
-            obstaja = False
-            # print("išči " + str(hsmid_isci))
-
-            for row2 in crp:
-                if row2[0] == hsmid_isci:
-                    obstaja = True
-                    print("Obstaja, prištej")
-                    # prištej
-                    row2[1] += row[1]
-                    row2[2] += row[2]
-                    break
-
-            if not obstaja:
-                # print("Ne obstaja, dodaj hsmid " + str(hsmid_isci))
-                crp.append(row)
-
-        print("Vrstic v crp[] " + str(len(crp)))
+        # print("vpisi_prebivalce")
+        self.prebivalcihs.prebivalci_hs()
+        # dialog = QFileDialog(self)
+        # dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        # dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
+        # dialog.setViewMode(QFileDialog.ViewMode.Detail)
+        # dialog.setDirectory("d:/podatki/")
+        # if dialog.exec():
+        #     filename = dialog.selectedFiles()[0]
+        #     if filename:
         # print("crp:", crp)
         # dialog = QFileDialog(self)
         # dialog.setFileMode(QFileDialog.FileMode.ExistingFile)

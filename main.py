@@ -20,27 +20,7 @@ from om_v_arcgis import OmArcgis
 from prenesi_hs import HsArcgis
 from brisi_hs_izven import BrisiHs
 from prebivalci_v_hs import PrebivalciHs
-
-
-class MsgBox(QMessageBox):
-    def __init__(self, tekst, parent=None):
-        super().__init__(parent)
-        self.tekst = tekst
-
-        self.setWindowTitle("Odloči.")
-        self.setIcon(QMessageBox.Icon.Question)
-        self.setText(tekst)
-        self.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        self.buttonY = self.button(QMessageBox.StandardButton.Yes)
-        self.buttonY.setText("Da")
-        self.buttonN = self.button(QMessageBox.StandardButton.No)
-        self.buttonN.setText("Ne")
-        MsgBox.exec(self)
-        # buttons = (
-        #     QDialogButtonBox.StandardButton.Yes | QDialogButtonBox.StandardButton.No
-        # )
+from hsmid_v_crp import HsmidCrp
 
 
 class MainWindow(QMainWindow):
@@ -59,6 +39,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_hs_aglo.clicked.connect(self.aglo_hs)
         self.ui.btn_brisi_hs.clicked.connect(self.brisi_hs)
         self.ui.btn_preb.clicked.connect(self.vpisi_prebivalce)
+        self.ui.btn_hsmid_crp.clicked.connect(self.dodaj_hsmid)
 
         # Logger
         self.logWindow = self.ui.textEdit
@@ -69,6 +50,7 @@ class MainWindow(QMainWindow):
         self.hsarcgis = HsArcgis(comm=self.comm)
         self.brisihs = BrisiHs(comm=self.comm)
         self.prebivalcihs = PrebivalciHs(comm=self.comm)
+        self.hsmidcrp = HsmidCrp(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
 
@@ -76,48 +58,25 @@ class MainWindow(QMainWindow):
         # self.odjemna_arcgis()
         # self.prenesi_hs()
         # self.brisi_hs()
-        self.vpisi_prebivalce()
+        # self.dodaj_hsmid()
 
     def vpisi_prebivalce(self):
         # print("vpisi_prebivalce")
         self.prebivalcihs.prebivalci_hs()
-        # dialog = QFileDialog(self)
-        # dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        # dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
-        # dialog.setViewMode(QFileDialog.ViewMode.Detail)
-        # dialog.setDirectory("d:/podatki/")
-        # if dialog.exec():
-        #     filename = dialog.selectedFiles()[0]
-        #     if filename:
-        # print("crp:", crp)
-        # dialog = QFileDialog(self)
-        # dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        # dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
-        # dialog.setViewMode(QFileDialog.ViewMode.Detail)
-        # dialog.setDirectory("d:/podatki/")
-        # if dialog.exec():
-        #     filename = dialog.selectedFiles()[0]
-        #     if filename:
-        #         # Naloži excel datoteko
-        #         print(filename)
-        #         workbook = load_workbook(filename)
-        #         sheet = workbook.active
-        #         seznam = []
-        #         # Get the column indices for the specified headings
-        #         header = {cell.value: cell.column for cell in sheet[1]}
-        #         hsmid_col = header["hsmid"]
-        #         stalno_col = header["stalno"]
-        #         zacasno_col = header["zacasno"]
-        #
-        #         # Iterate over the rows, skipping the header row
-        #         for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
-        #             hsmid_value = row[hsmid_col - 1].value
-        #             stalno_value = row[stalno_col - 1].value
-        #             zacasno_value = row[zacasno_col - 1].value
-        #             seznam.append([hsmid_value, stalno_value, zacasno_value])
-        #
-        #         # Print the list to verify the values
-        #         print("Values from columns 'hsmid', 'stalno', and 'zacasno':", seznam)
+
+    def dodaj_hsmid(self):
+        # V Crp Excel dodaj polji za Hsmid
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
+        dialog.setViewMode(QFileDialog.ViewMode.Detail)
+        dialog.setDirectory("d:/podatki/")
+        if dialog.exec():
+            filename = dialog.selectedFiles()[0]
+            if filename:
+                #
+                # filename = "d:/podatki/crp-01-07-2024.xlsx"
+                self.hsmidcrp.hsmid_crp(filename)
 
     def prenesi_hs(self):
         msgBox = MsgBox(
@@ -159,6 +118,27 @@ class MainWindow(QMainWindow):
     def aglo_hs(self):
         self.aglohs.agloVoda()
         # self.aglohs.agloKan()
+
+
+class MsgBox(QMessageBox):
+    def __init__(self, tekst, parent=None):
+        super().__init__(parent)
+        self.tekst = tekst
+
+        self.setWindowTitle("Odloči.")
+        self.setIcon(QMessageBox.Icon.Question)
+        self.setText(tekst)
+        self.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        self.buttonY = self.button(QMessageBox.StandardButton.Yes)
+        self.buttonY.setText("Da")
+        self.buttonN = self.button(QMessageBox.StandardButton.No)
+        self.buttonN.setText("Ne")
+        MsgBox.exec(self)
+        # buttons = (
+        #     QDialogButtonBox.StandardButton.Yes | QDialogButtonBox.StandardButton.No
+        # )
 
 
 def konec():

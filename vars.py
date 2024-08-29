@@ -22,10 +22,25 @@ mydbname = "radgona"
 # Razno
 verzija = "27.6.2024 py"
 obcina_radgona_id = 29
+obcina_jurij_id = 116
+obcina_apace_id = 195
+obcina_radenci_id = 100
+obcine_id = [obcina_apace_id, obcina_radenci_id, obcina_jurij_id, obcina_radgona_id]
+obcina_radgona_eid = "110200000110268260"
+obcina_apace_eid = "110200000214364379"
+obcina_jurij_eid = "110200000110274235"
+obcina_radenci_eid = "110200000110272536"
+obcine_eid = [
+    obcina_apace_eid,
+    obcina_radenci_eid,
+    obcina_jurij_eid,
+    obcina_radgona_eid,
+]
 obcina_radgona = 11026826
 obcina_apace = 21436437
 obcina_radenci = 11027253
 obcina_jurij = 11027423
+# začasna lokacija za odlaganje OM brez HS
 x_brez_hs = 576683
 y_brez_hs = 171374
 

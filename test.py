@@ -1,40 +1,69 @@
-import arcpy
-
-# Define the list of coordinates (latitude, longitude) in decimal degrees
-coordinates = [
-    (46.6806, 15.9507),
-    # Add more coordinates as needed
-]
-
-
-def convert_to_slovenia_grid(lat, lon):
-    """
-    Convert a single (latitude, longitude) coordinate from decimal degrees to meters
-    in the Slovenia National Grid 1996 coordinate system (EPSG:3794).
-
-    Args:
-        lat (float): Latitude in decimal degrees.
-        lon (float): Longitude in decimal degrees.
-
-    Returns:
-        tuple: (X, Y) coordinates in meters.
-    """
-    input_sr = arcpy.SpatialReference(4326)  # WGS 1984
-    output_sr = arcpy.SpatialReference(3794)  # Slovenia National Grid 1996
-
-    point = arcpy.Point(lon, lat)
-    point_geom = arcpy.PointGeometry(point, input_sr)
-    projected_point_geom = point_geom.projectAs(output_sr)
-
-    x_meters = projected_point_geom.centroid.X
-    y_meters = projected_point_geom.centroid.Y
-
-    return x_meters, y_meters
+import sys
+from PySide6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+    QLabel,
+    QProgressBar,
+    QPushButton,
+)
+from PySide6.QtCore import Qt, QThread, Signal
 
 
-# Example usage
-latitude = 46.6806
-longitude = 15.9507
+class Worker(QThread):
+    progress = Signal(int)
+    status = Signal(str)
 
-x, y = convert_to_slovenia_grid(latitude, longitude)
-print(f"Projected coordinates: X = {x}, Y = {y}")
+    def run(self):
+        total_steps = 100  # Example total steps
+        for i in range(total_steps):
+            # Simulate a long-running task
+            self.msleep(50)  # Sleep for 50ms
+            self.progress.emit(i + 1)
+            self.status.emit(f"Processing {i + 1}/{total_steps}")
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Progress Bar Example")
+        self.setGeometry(100, 100, 400, 200)
+
+        self.layout = QVBoxLayout()
+
+        self.label = QLabel("Starting...", self)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.label)
+
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setMaximum(100)
+        self.layout.addWidget(self.progress_bar)
+
+        self.start_button = QPushButton("Start", self)
+        self.start_button.clicked.connect(self.start_process)
+        self.layout.addWidget(self.start_button)
+
+        container = QWidget()
+        container.setLayout(self.layout)
+        self.setCentralWidget(container)
+
+    def start_process(self):
+        self.worker = Worker()
+        self.worker.progress.connect(self.update_progress)
+        self.worker.status.connect(self.update_status)
+        self.worker.start()
+
+    def update_progress(self, value):
+        self.progress_bar.setValue(value)
+
+    def update_status(self, message):
+        self.label.setText(message)
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())

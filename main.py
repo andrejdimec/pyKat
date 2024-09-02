@@ -1,13 +1,16 @@
 import sys
-
+import os
+import winsound
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
     QMessageBox,
     QFileDialog,
 )
-from PySide6.QtGui import Qt
-from PySide6.QtCore import Slot
+import openpyxl
+
+# from PySide6.QtGui import Qt
+from PySide6.QtCore import Slot, Qt, QThread, Signal
 
 
 import vars
@@ -21,6 +24,7 @@ from prenesi_hs import HsArcgis
 from brisi_hs_izven import BrisiHs
 from prebivalci_v_hs import PrebivalciHs
 from hsmid_v_crp import HsmidCrp
+from hsmid_v_crp_worker import HsmidCrpWorker
 
 
 class MainWindow(QMainWindow):
@@ -40,6 +44,10 @@ class MainWindow(QMainWindow):
         self.ui.btn_brisi_hs.clicked.connect(self.brisi_hs)
         self.ui.btn_preb.clicked.connect(self.vpisi_prebivalce)
         self.ui.btn_hsmid_crp.clicked.connect(self.dodaj_hsmid)
+        self.ui.btn_test.clicked.connect(self.start_process)
+
+        self.progress_bar = self.ui.progress_bar
+        self.progress_label = self.ui.progress_label
 
         # Logger
         self.logWindow = self.ui.textEdit
@@ -51,8 +59,12 @@ class MainWindow(QMainWindow):
         self.brisihs = BrisiHs(comm=self.comm)
         self.prebivalcihs = PrebivalciHs(comm=self.comm)
         self.hsmidcrp = HsmidCrp(comm=self.comm)
+        self.hsmidcrp_worker = HsmidCrpWorker(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
+
+        self.progress_label.setText("")
+        self.progress_bar.setVisible(False)
 
         # self.napolni_om_fc()
         # self.odjemna_arcgis()
@@ -60,9 +72,44 @@ class MainWindow(QMainWindow):
         # self.brisi_hs()
         # self.dodaj_hsmid()
 
+    def start_process(self):
+        pass
+        # self.progress_bar.setVisible(True)
+        # self.thread = QThread()
+        # self.worker = self.hsmidcrp_worker
+        # self.worker.moveToThread(self.thread)
+        #
+        # self.worker.progress.connect(self.update_progress)
+        # self.worker.status.connect(self.update_status)
+        # self.thread.started.connect(
+        #     self.worker.hsmid_crp("d:/podatki/crp-01-07-2024.xlsx")
+        # )
+        # self.worker.status.connect(lambda: self.thread.quit())
+        # self.thread.start()
+        # self.play_sound()
+
+    def play_sound(self):
+        # Play the Windows system confirmation sound
+        winsound.MessageBeep(winsound.MB_OK)
+
+    def update_progress(self, value):
+        self.progress_bar.setValue(value)
+        self.progress_bar.repaint()
+
+    def update_status(self, message):
+        self.progress_label.setText(message)
+        self.progress_label.repaint()
+
     def vpisi_prebivalce(self):
         # print("vpisi_prebivalce")
         self.prebivalcihs.prebivalci_hs()
+
+    def is_file_open(self, file_path):
+        try:
+            os.rename(file_path, file_path)
+            return False
+        except:
+            return True
 
     def dodaj_hsmid(self):
         # V Crp Excel dodaj polji za Hsmid
@@ -74,12 +121,26 @@ class MainWindow(QMainWindow):
         if dialog.exec():
             filename = dialog.selectedFiles()[0]
             if filename:
+                if not self.is_file_open(filename):
+                    self.progress_bar.setVisible(True)
+                    self.thread = QThread()
+                    self.worker = self.hsmidcrp_worker
+                    self.worker.moveToThread(self.thread)
+
+                    self.worker.progress.connect(self.update_progress)
+                    self.worker.status.connect(self.update_status)
+                    self.thread.started.connect(self.worker.hsmid_crp(filename))
+                    self.worker.status.connect(lambda: self.thread.quit())
+                    self.thread.start()
+                    self.play_sound()
+                else:
+                    MsgBox("Najprej zapri datoteko " + filename)
                 #
                 # filename = "d:/podatki/crp-01-07-2024.xlsx"
-                self.hsmidcrp.hsmid_crp(filename)
+                # self.hsmidcrp.hsmid_crp(filename)
 
     def prenesi_hs(self):
-        msgBox = MsgBox(
+        msgBox = MsgBoxYesNo(
             "Želiš prenesti nove hišne številke? Stare bodo zbrisane iz katastra", self
         )
         if msgBox.clickedButton() == msgBox.buttonY:
@@ -90,7 +151,7 @@ class MainWindow(QMainWindow):
         # print("prenesi_hs")
 
     def brisi_hs(self):
-        msgBox = MsgBox("Želiš izbrisati odvečne hišne številke?", self)
+        msgBox = MsgBoxYesNo("Želiš izbrisati odvečne hišne številke?", self)
         if msgBox.clickedButton() == msgBox.buttonY:
             self.brisihs.brisi_hs()
         else:
@@ -109,7 +170,7 @@ class MainWindow(QMainWindow):
         print("log:", text)
 
     def odjemna_arcgis(self):
-        msgBox = MsgBox("Želiš prenesti nova odjemna mesta v kataster?", self)
+        msgBox = MsgBoxYesNo("Želiš prenesti nova odjemna mesta v kataster?", self)
         if msgBox.clickedButton() == msgBox.buttonY:
             self.omarcgis.napolni_om_fc()
         else:
@@ -120,7 +181,7 @@ class MainWindow(QMainWindow):
         # self.aglohs.agloKan()
 
 
-class MsgBox(QMessageBox):
+class MsgBoxYesNo(QMessageBox):
     def __init__(self, tekst, parent=None):
         super().__init__(parent)
         self.tekst = tekst
@@ -135,10 +196,24 @@ class MsgBox(QMessageBox):
         self.buttonY.setText("Da")
         self.buttonN = self.button(QMessageBox.StandardButton.No)
         self.buttonN.setText("Ne")
-        MsgBox.exec(self)
+        MsgBoxYesNo.exec(self)
         # buttons = (
         #     QDialogButtonBox.StandardButton.Yes | QDialogButtonBox.StandardButton.No
         # )
+
+
+class MsgBox(QMessageBox):
+    def __init__(self, tekst, parent=None):
+        super().__init__(parent)
+        self.tekst = tekst
+
+        self.setWindowTitle("Sporočilo.")
+        self.setIcon(QMessageBox.Icon.Information)
+        self.setText(tekst)
+        self.setStandardButtons(QMessageBox.StandardButton.Yes)
+        self.buttonY = self.button(QMessageBox.StandardButton.Yes)
+        self.buttonY.setText("V redu")
+        MsgBox.exec(self)
 
 
 def konec():

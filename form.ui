@@ -110,21 +110,35 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,30,2">
       <item>
-       <layout class="QHBoxLayout" name="top_layout" stretch="0">
+       <layout class="QHBoxLayout" name="top_layout" stretch="5,2,3">
         <property name="leftMargin">
          <number>10</number>
         </property>
         <item>
          <widget class="QLabel" name="label_wks">
           <property name="text">
-           <string>TextLabel</string>
+           <string>label_wks</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progress_bar">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="progress_label">
+          <property name="text">
+           <string>progress_label</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="center_layout" stretch="2,3">
+       <layout class="QHBoxLayout" name="center_layout" stretch="5,5">
         <item>
          <layout class="QVBoxLayout" name="center_left_layout" stretch="10,5,3">
           <property name="spacing">
@@ -510,6 +524,25 @@ li.checked::marker { content: &quot;\2612&quot;; }
              </property>
              <property name="text">
               <string>HSMID v CRP</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="btn_test">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>340</y>
+               <width>131</width>
+               <height>40</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Test</string>
              </property>
             </widget>
            </widget>

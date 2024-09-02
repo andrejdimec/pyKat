@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QPushButton, QSizePolicy, QTextEdit,
-    QVBoxLayout, QWidget)
+    QMainWindow, QProgressBar, QPushButton, QSizePolicy,
+    QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -58,6 +58,20 @@ class Ui_MainWindow(object):
 
         self.top_layout.addWidget(self.label_wks)
 
+        self.progress_bar = QProgressBar(self.centralwidget)
+        self.progress_bar.setObjectName(u"progress_bar")
+        self.progress_bar.setValue(0)
+
+        self.top_layout.addWidget(self.progress_bar)
+
+        self.progress_label = QLabel(self.centralwidget)
+        self.progress_label.setObjectName(u"progress_label")
+
+        self.top_layout.addWidget(self.progress_label)
+
+        self.top_layout.setStretch(0, 5)
+        self.top_layout.setStretch(1, 2)
+        self.top_layout.setStretch(2, 3)
 
         self.verticalLayout.addLayout(self.top_layout)
 
@@ -146,6 +160,10 @@ class Ui_MainWindow(object):
         self.btn_hsmid_crp.setObjectName(u"btn_hsmid_crp")
         self.btn_hsmid_crp.setGeometry(QRect(10, 290, 131, 40))
         self.btn_hsmid_crp.setMinimumSize(QSize(100, 40))
+        self.btn_test = QPushButton(self.frame_2)
+        self.btn_test.setObjectName(u"btn_test")
+        self.btn_test.setGeometry(QRect(10, 340, 131, 40))
+        self.btn_test.setMinimumSize(QSize(100, 40))
 
         self.center_left_layout.addWidget(self.frame_2)
 
@@ -229,8 +247,8 @@ class Ui_MainWindow(object):
 
         self.center_layout.addLayout(self.center_right_layout)
 
-        self.center_layout.setStretch(0, 2)
-        self.center_layout.setStretch(1, 3)
+        self.center_layout.setStretch(0, 5)
+        self.center_layout.setStretch(1, 5)
 
         self.verticalLayout.addLayout(self.center_layout)
 
@@ -260,7 +278,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Kataster", None))
-        self.label_wks.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_wks.setText(QCoreApplication.translate("MainWindow", u"label_wks", None))
+        self.progress_label.setText(QCoreApplication.translate("MainWindow", u"progress_label", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"ArcGis Desktop", None))
         self.btn_om_arcgis_table.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis", None))
         self.textEdit_2.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -316,6 +335,7 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">V Excel datoteko s CRP dodaj HSMID za stalno in za\u010dasno bivali\u0161\u010de</p></body></html>", None))
         self.btn_hsmid_crp.setText(QCoreApplication.translate("MainWindow", u"HSMID v CRP", None))
+        self.btn_test.setText(QCoreApplication.translate("MainWindow", u"Test", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"ArcGis Online", None))
         self.btn_om_arcgis_ol.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis OL", None))
         self.btn_aglo_om.setText(QCoreApplication.translate("MainWindow", u"Aglo ->OM OL", None))

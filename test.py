@@ -1,69 +1,51 @@
-import sys
-from PySide6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QVBoxLayout,
-    QWidget,
-    QLabel,
-    QProgressBar,
-    QPushButton,
-)
-from PySide6.QtCore import Qt, QThread, Signal
+import arcpy
+import os, sys
+from arcgis.gis import GIS
 
+### Start setting variables
+# Set the path to the project
+prjPath = r"C:\PROJECTS\NightlyUpdates\NightlyUpdates.aprx"
 
-class Worker(QThread):
-    progress = Signal(int)
-    status = Signal(str)
+# Update the following variables to match:
+# Feature service/SD name in arcgis.com, user/password of the owner account
+sd_fs_name = "MyPublicMap"
+portal = "http://www.arcgis.com" # Can also reference a local portal
+user = "UserName"
+password = "p@sswOrd"
 
-    def run(self):
-        total_steps = 100  # Example total steps
-        for i in range(total_steps):
-            # Simulate a long-running task
-            self.msleep(50)  # Sleep for 50ms
-            self.progress.emit(i + 1)
-            self.status.emit(f"Processing {i + 1}/{total_steps}")
+# Set sharing options
+shrOrg = True
+shrEveryone = False
+shrGroups = ""
 
+### End setting variables
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
+# Local paths to create temporary content
+relPath = os.path.dirname(prjPath)
+sddraft = os.path.join(relPath, "WebUpdate.sddraft")
+sd = os.path.join(relPath, "WebUpdate.sd")
 
-        self.setWindowTitle("Progress Bar Example")
-        self.setGeometry(100, 100, 400, 200)
+# Create a new SDDraft and stage to SD
+print("Creating SD file")
+arcpy.env.overwriteOutput = True
+prj = arcpy.mp.ArcGISProject(prjPath)
+mp = prj.listMaps()[0]
+arcpy.mp.CreateWebLayerSDDraft(mp, sddraft, sd_fs_name, ‘MY_HOSTED_SERVICES’, ‘FEATURE_ACCESS’,", True, True)
+arcpy.StageService_server(sddraft, sd)
 
-        self.layout = QVBoxLayout()
+print("Connecting to {}".format(portal))
+gis = GIS(portal, user, password)
 
-        self.label = QLabel("Starting...", self)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(self.label)
+# Find the SD, update it, publish /w overwrite and set sharing and metadata
+print("Search for original SD on portal…")
+sdItem = gis.content.search("{} AND owner:{}".format(sd_fs_name, user), item_type="Service Definition")[0]
+print("Found SD: {}, ID: {} n Uploading and overwriting…".format(sdItem.title, sdItem.id))
+sdItem.update(data=sd)
+print("Overwriting existing feature service…")
+fs = sdItem.publish(overwrite=True)
 
-        self.progress_bar = QProgressBar(self)
-        self.progress_bar.setMaximum(100)
-        self.layout.addWidget(self.progress_bar)
+if shrOrg or shrEveryone or shrGroups:
+  print("Setting sharing options…")
+  fs.share(org=shrOrg, everyone=shrEveryone, groups=shrGroups)
 
-        self.start_button = QPushButton("Start", self)
-        self.start_button.clicked.connect(self.start_process)
-        self.layout.addWidget(self.start_button)
-
-        container = QWidget()
-        container.setLayout(self.layout)
-        self.setCentralWidget(container)
-
-    def start_process(self):
-        self.worker = Worker()
-        self.worker.progress.connect(self.update_progress)
-        self.worker.status.connect(self.update_status)
-        self.worker.start()
-
-    def update_progress(self, value):
-        self.progress_bar.setValue(value)
-
-    def update_status(self, message):
-        self.label.setText(message)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+print("Finished updating: {} – ID: {}".format(fs.title, fs.id))

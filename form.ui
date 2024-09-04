@@ -658,6 +658,25 @@ li.checked::marker { content: &quot;\2612&quot;; }
               <string>Aglo -&gt;OM OL</string>
              </property>
             </widget>
+            <widget class="QPushButton" name="btn_posodobi_kanal">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>140</y>
+               <width>131</width>
+               <height>40</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Posodobi kanal.</string>
+             </property>
+            </widget>
            </widget>
           </item>
           <item>

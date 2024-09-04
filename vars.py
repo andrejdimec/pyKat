@@ -2,7 +2,20 @@ from PySide6.QtCore import Qt
 
 # Variable
 # wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
+
+# Arcgis pro
 wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
+aktualna_karta = r"Kataster_2024_08.aprx"
+aprx_path = r"d:\Kataster\GR_D96\Projects"
+map_name = "Kataster D96"
+
+
+# Arcgis Online
+ago_username = "komunala_radgona"
+ago_password = "kora1234"
+ago_url = "https://www.arcgis.com"
+ago_karta = "Karta za testiranje"
+
 
 # Baze podatkov
 # MS SQL baza

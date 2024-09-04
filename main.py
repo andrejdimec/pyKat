@@ -1,6 +1,9 @@
 import sys
 import os
 import winsound
+
+import arcpy
+from arcgis.gis import GIS
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -26,6 +29,8 @@ from prebivalci_v_hs import PrebivalciHs
 from hsmid_v_crp import HsmidCrp
 from hsmid_v_crp_worker import HsmidCrpWorker
 
+from posodobi_kanalizacijo import PosodobiKanalizacijo
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -44,7 +49,8 @@ class MainWindow(QMainWindow):
         self.ui.btn_brisi_hs.clicked.connect(self.brisi_hs)
         self.ui.btn_preb.clicked.connect(self.vpisi_prebivalce)
         self.ui.btn_hsmid_crp.clicked.connect(self.dodaj_hsmid)
-        self.ui.btn_test.clicked.connect(self.start_process)
+        self.ui.btn_test.clicked.connect(self.test)
+        self.ui.btn_posodobi_kanal.clicked.connect(self.posodobi_kanalizacijo)
 
         self.progress_bar = self.ui.progress_bar
         self.progress_label = self.ui.progress_label
@@ -66,27 +72,62 @@ class MainWindow(QMainWindow):
         self.progress_label.setText("")
         self.progress_bar.setVisible(False)
 
+        self.wpk = None
+
         # self.napolni_om_fc()
         # self.odjemna_arcgis()
         # self.prenesi_hs()
         # self.brisi_hs()
         # self.dodaj_hsmid()
+        self.posodobi_worker()
 
-    def start_process(self):
+    def posodobi_worker(self):
+        print("Posodobi kanalizacijo na AGO...")
+        source_map_name = vars.map_name
+        source_layer_name = "Dev\Kanalizacijske_Linije"
+
+        # Local paths
+        prj_path = os.path.join(vars.aprx_path, vars.aktualna_karta)
+        print("Project", prj_path)
+
+        # Set portal login
+        portal = vars.ago_url
+        ago_user = vars.ago_username
+        ago_pass = vars.ago_password
+
+        # Set sharing
+        shrOrg = True
+        shrEveryone = False
+        shrGroups = ""
+
+        # Connect to AGO
+        print("Connecting to {}".format(portal))
+        gis = GIS(portal, ago_user, ago_pass)
+        print("Logged in as: " + gis.properties.user.username + "\n")
+
+        # Set temp staging files
+        temp_path = vars.aprx_path
+        sddraft = os.path.join(temp_path, "temp_file.sddraft")
+        sd = os.path.join(temp_path, "temp_file.sd")
+
+        # Assign environment, project and dictionaries
+        arcpy.env.overwriteOutput = True
+        prj = arcpy.mp.ArcGISProject(prj_path)
+        map_dict = {}
+        server_dict = {}
+
+        source_map = project.listMaps(source_map_name)[0]
+        source_layer = source_map.listLayers
+        # source_layer = source_map.listLayers(source_layer_name)[0]
+        print(source_layer)
+
+    def test(self):
         pass
-        # self.progress_bar.setVisible(True)
-        # self.thread = QThread()
-        # self.worker = self.hsmidcrp_worker
-        # self.worker.moveToThread(self.thread)
-        #
-        # self.worker.progress.connect(self.update_progress)
-        # self.worker.status.connect(self.update_status)
-        # self.thread.started.connect(
-        #     self.worker.hsmid_crp("d:/podatki/crp-01-07-2024.xlsx")
-        # )
-        # self.worker.status.connect(lambda: self.thread.quit())
-        # self.thread.start()
-        # self.play_sound()
+
+    def posodobi_kanalizacijo(self):
+        if self.wpk is None:
+            self.wpk = PosodobiKanalizacijo()
+        self.wpk.exec()
 
     def play_sound(self):
         # Play the Windows system confirmation sound
@@ -105,6 +146,7 @@ class MainWindow(QMainWindow):
         self.prebivalcihs.prebivalci_hs()
 
     def is_file_open(self, file_path):
+        # Preveri, če je Excel datoteka že odprta
         try:
             os.rename(file_path, file_path)
             return False
@@ -112,7 +154,7 @@ class MainWindow(QMainWindow):
             return True
 
     def dodaj_hsmid(self):
-        # V Crp Excel dodaj polji za Hsmid
+        # V Crp Excel dodaj polji za Hsmid in EIDHS
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
@@ -140,6 +182,7 @@ class MainWindow(QMainWindow):
                 # self.hsmidcrp.hsmid_crp(filename)
 
     def prenesi_hs(self):
+        # Prenesi hišne številke s portala Geoservis
         msgBox = MsgBoxYesNo(
             "Želiš prenesti nove hišne številke? Stare bodo zbrisane iz katastra", self
         )
@@ -151,6 +194,7 @@ class MainWindow(QMainWindow):
         # print("prenesi_hs")
 
     def brisi_hs(self):
+        # Briši hišne številke, ki niso v štirih občinah
         msgBox = MsgBoxYesNo("Želiš izbrisati odvečne hišne številke?", self)
         if msgBox.clickedButton() == msgBox.buttonY:
             self.brisihs.brisi_hs()
@@ -170,8 +214,21 @@ class MainWindow(QMainWindow):
         print("log:", text)
 
     def odjemna_arcgis(self):
+        # Prenesi odjemna mesti iz bass v kataster
         msgBox = MsgBoxYesNo("Želiš prenesti nova odjemna mesta v kataster?", self)
         if msgBox.clickedButton() == msgBox.buttonY:
+            self.progress_bar.setVisible(True)
+            self.thread = QThread()
+            self.worker = self.hsmidcrp_worker
+            self.worker.moveToThread(self.thread)
+
+            self.worker.progress.connect(self.update_progress)
+            self.worker.status.connect(self.update_status)
+            self.thread.started.connect(self.worker.hsmid_crp(filename))
+            self.worker.status.connect(lambda: self.thread.quit())
+            self.thread.start()
+            self.play_sound()
+
             self.omarcgis.napolni_om_fc()
         else:
             print("Izbrano ne")

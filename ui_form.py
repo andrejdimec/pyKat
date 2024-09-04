@@ -190,6 +190,10 @@ class Ui_MainWindow(object):
         self.btn_aglo_om.setObjectName(u"btn_aglo_om")
         self.btn_aglo_om.setGeometry(QRect(10, 90, 131, 40))
         self.btn_aglo_om.setMinimumSize(QSize(100, 40))
+        self.btn_posodobi_kanal = QPushButton(self.frame)
+        self.btn_posodobi_kanal.setObjectName(u"btn_posodobi_kanal")
+        self.btn_posodobi_kanal.setGeometry(QRect(10, 140, 131, 40))
+        self.btn_posodobi_kanal.setMinimumSize(QSize(100, 40))
 
         self.center_left_layout.addWidget(self.frame)
 
@@ -339,6 +343,7 @@ class Ui_MainWindow(object):
         self.label.setText(QCoreApplication.translate("MainWindow", u"ArcGis Online", None))
         self.btn_om_arcgis_ol.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis OL", None))
         self.btn_aglo_om.setText(QCoreApplication.translate("MainWindow", u"Aglo ->OM OL", None))
+        self.btn_posodobi_kanal.setText(QCoreApplication.translate("MainWindow", u"Posodobi kanal.", None))
         self.btn_porocilo_voda.setText(QCoreApplication.translate("MainWindow", u"Vodovod", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Poro\u010dila", None))
         self.btn_konec.setText(QCoreApplication.translate("MainWindow", u"Konec (F10)", None))

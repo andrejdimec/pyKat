@@ -83,11 +83,13 @@ class MainWindow(QMainWindow):
 
     def posodobi_worker(self):
         print("Posodobi kanalizacijo na AGO...")
-        source_map_name = vars.map_name
-        source_layer_name = "Dev\Kanalizacijske_Linije"
 
         # Local paths
+        map_name = vars.map_name
+        group_layer_name = "Dev"
         prj_path = os.path.join(vars.aprx_path, vars.aktualna_karta)
+        source_layer_1 = "Kanalizacijska linija"
+        source_layer_2 = "Kanalizacijski jašek"
         print("Project", prj_path)
 
         # Set portal login
@@ -105,6 +107,22 @@ class MainWindow(QMainWindow):
         gis = GIS(portal, ago_user, ago_pass)
         print("Logged in as: " + gis.properties.user.username + "\n")
 
+        aprx = arcpy.mp.ArcGISProject(prj_path)
+
+        map_obj = aprx.listMaps(map_name)[0]
+        group_layer = [
+            layer
+            for layer in map_obj.listLayers()
+            if layer.isGroupLayer and layer.name == group_layer_name
+        ][0]
+
+        source_layer_1_obj = [
+            layer for layer in group_layer.listLayers() if layer.name == source_layer_1
+        ][0]
+        source_layer_2_obj = [
+            layer for layer in group_layer.listLayers() if layer.name == source_layer_2
+        ][0]
+
         # Set temp staging files
         temp_path = vars.aprx_path
         sddraft = os.path.join(temp_path, "temp_file.sddraft")
@@ -116,10 +134,15 @@ class MainWindow(QMainWindow):
         map_dict = {}
         server_dict = {}
 
-        source_map = project.listMaps(source_map_name)[0]
-        source_layer = source_map.listLayers
+        # source_map = prj.listMaps(source_map_name)[0]
+        # source_layer = source_map.listLayers
         # source_layer = source_map.listLayers(source_layer_name)[0]
-        print(source_layer)
+        # print(source_layer)
+
+    def overwrite_web_layer(self, source_layer):
+        pass
+        # create sharing draft
+        # sharing_draft=map
 
     def test(self):
         pass

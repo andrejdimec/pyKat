@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 # wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
 
 # Arcgis pro
-wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
+wkspace = r"D:\Kataster\GR_D96\Database\GRD96_delovna.gdb"
 aktualna_karta = r"Kataster_2024_08.aprx"
 aprx_path = r"d:\Kataster\GR_D96\Projects"
 map_name = "Kataster D96"

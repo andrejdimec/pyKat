@@ -1,1 +1,14 @@
+Write me an arcpy python program that shares single arcgis pro layer "jasek_razno" as web layer to arcgis online portal. I don't want to share all layers in map, only one. Checks and confirm with print layer’s existence before proceeding. Use CreateWebLayerSDDraft and not getWebLayerSharingDraft
+Name of the arcgis pro project is "dev_project.aprx". Path to the project is "d:\Kataster\GR_D96\Projects". Name of the arcgis pro map is "map1". Name of arcgis pro layer to be shared is "jasek_razno6". Use newest arcgis pro, arcpy and python versions. Do not use AnalyzeForSD. Login credentials for arcgis online: user: komunala_radgona, password: kora1234
+layer name and filename of draft file should be from the same variable layer_name. For working folder use ArcGis scratchfolder function.
+Delete staging temp files after uploading to portal
+Print what program is doing. Write detailed comments of code
+
+
+
+Write me an arcpy python program that shares single arcgis pro layer "jasek_razno" as web layer to arcgis online portal. I don't want to share all layers in map, only one. Checks and confirm with print layer’s existence before proceeding.
+Name of the arcgis pro project is "dev_project.aprx". Path to the project is "d:\Kataster\GR_D96\Projects". Name of the arcgis pro map is "map1". Name of arcgis pro layer to be shared is "jasek_razno". Use newest arcgis pro, arcpy and python versions. Do not use AnalyzeForSD
+Log with print what program is doing
+
+
 Write me an arcpy python program that overwrites two web layers "Kanalizacijska linija" and "Kanalizacijski jašek" in map "Karta za testiranje", folder "_Dev" on arcgis online portal. Source layers "Kanalizacijska linija" and "Kanalizacijski jašek" are stored in arcgis pro map "Kataster D96" in group folder "Dev". Name of the project is "Kataster_2024_08.aprx". Path to the project is "d:\Kataster\GR_D96\Projects".

@@ -1,0 +1,22 @@
+Loading project from d:\Kataster\GR_D96\Projects\dev_project.aprx
+Accessing map: map1
+Finding layer: jasek_razno
+Layer jasek_razno not found in map map1. Exiting script.
+Loading project from d:\Kataster\GR_D96\Projects\dev_project.aprx
+Accessing map: map1
+Finding layer: jasek_razno5
+Layer found: jasek_razno5
+Creating sharing draft for layer: jasek_razno5
+Staging service from d:\Kataster\GR_D96\Projects\jasek_razno.sddraft to d:\Kataster\GR_D96\Projects\jasek_razno.sd
+Loading project from d:\Kataster\GR_D96\Projects\dev_project.aprx
+Accessing map: map1
+Finding layer: jasek_razno6
+Layer jasek_razno6 not found in map map1. Exiting script.
+Loading project from d:\Kataster\GR_D96\Projects\dev_project.aprx
+Accessing map: map1
+Finding layer: jasek_razno6
+Layer found: jasek_razno6
+Creating sharing draft for layer: jasek_razno6
+Staging service from d:\Kataster\GR_D96\Projects\jasek_razno6.sddraft to d:\Kataster\GR_D96\Projects\jasek_razno6.sd
+Uploading service definition to ArcGIS Online
+Layer successfully uploaded to ArcGIS Online.

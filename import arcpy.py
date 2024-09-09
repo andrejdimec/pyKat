@@ -3,15 +3,14 @@ import os
 import sys
 
 
-#
 # TODO Zadnja - dela
 # Function to print and log progress
 def log(message):
     print(message)
 
 
-def brisi_temp():
-    # Zbriši temp datoteke
+def delete_temp():
+    # Delete the temporary files after the upload is complete
     try:
         log("Deleting temporary files...")
         if os.path.exists(sddraft):
@@ -22,7 +21,7 @@ def brisi_temp():
             log(f"Deleted: {sd}")
         if os.path.exists(thumb):
             os.remove(thumb)
-            log(f"Deleted: {sd}")
+            log(f"Deleted: {thumb}")
     except Exception as e:
         log(f"Error while deleting temporary files: {str(e)}")
 
@@ -30,7 +29,7 @@ def brisi_temp():
 # Define input variables
 project_path = r"d:\Kataster\GR_D96\Projects\dev_project.aprx"
 map_name = "map1"
-layer_name = "jašek razno 11"
+layer_name = "jasek_razno6"
 
 # ArcGIS Online credentials
 portal_url = "https://www.arcgis.com"
@@ -82,19 +81,24 @@ sddraft = os.path.join(scratch_folder, f"{layer_name}.sddraft")
 sd = os.path.join(scratch_folder, f"{layer_name}.sd")
 thumb = os.path.join(scratch_folder, "Thumbnail.png")
 
+
 # Create a service definition draft
 log(f"Creating Service Definition Draft for layer '{layer_name}'...")
+
+description = f"This web layer is created from the {layer_name} layer in ArcGIS Pro"
+
 arcpy.mp.CreateWebLayerSDDraft(
     map_or_layers=layer,  # Input layer object
     out_sddraft=sddraft,  # Output path for .sddraft file
     service_name=output_service_name,  # Name of the web service to be published
     service_type="HOSTING_SERVER",  # ArcGIS Online hosting server
     server_type="MY_HOSTED_SERVICES",  # Service connection type for ArcGIS Online
-    folder_name="dev",  # Folder on ArcGIS Online (empty means root folder)
+    folder_name="_Dev",  # Folder on ArcGIS Online (empty means root folder)
     overwrite_existing_service=True,  # Overwrite existing service with the same name
-    summary=f"Web layer of the '{layer_name}' layer",  # Summary for the service
-    tags=f"arcpy, {layer_name}, ArcGIS Online",  # Tags to describe the web layer
-    description=f"This web layer is created from the '{layer_name}' layer in ArcGIS Pro",  # Detailed description
+    summary="Web layer of the Arcgis Pro layer",  # Summary for the service
+    tags="ArcGIS Online, arcpy",  # Tags to describe the web layer
+    credits="andrejd",
+    description="Opis",  # Detailed description
 )
 
 # Skip AnalyzeForSD and move directly to staging the service
@@ -109,22 +113,19 @@ try:
 except Exception as e:
     log(f"Errors:")
     log("Sddraft not staged. Analyzer errors encountered - {}".format(str(e)))
-    brisi_temp()
+    delete_temp()
     sys.exit("Napaka pri staging.")
 
 # Upload the staged service definition to ArcGIS Online
 log(f"Uploading and publishing the service '{layer_name}' to ArcGIS Online...")
-
 try:
     arcpy.UploadServiceDefinition_server(sd, "MY_HOSTED_SERVICES")
-    log(
-        f"Layer '{layer_name}' has been successfully shared as a web layer on ArcGIS Online."
-    )
-
+    f"Layer '{layer_name}' has been successfully shared as a web layer on ArcGIS Online."
 except Exception as e:
-    log("Error uploading - {}".format(str(e)))
-    brisi_temp()
+    log("Upload error - {}".format(str(e)))
+    delete_temp()
     sys.exit("Napaka pri upload.")
 
-brisi_temp()  # Final log confirming completion
-log("Končano.")
+delete_temp()
+# Final log confirming completion
+log(f"Končano v.")

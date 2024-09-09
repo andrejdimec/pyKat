@@ -2,6 +2,7 @@
     "files": [
         "mainwindow.py",
         "form.ui",
-        "posodobi_vodo.py"
+        "posodobi_vodo.py",
+        "frm_posodobi_kanalizacijo.ui"
     ]
 }

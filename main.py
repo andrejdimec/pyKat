@@ -2,8 +2,6 @@ import sys
 import os
 import winsound
 
-import arcpy
-from arcgis.gis import GIS
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -28,8 +26,12 @@ from brisi_hs_izven import BrisiHs
 from prebivalci_v_hs import PrebivalciHs
 from hsmid_v_crp import HsmidCrp
 from hsmid_v_crp_worker import HsmidCrpWorker
-
 from posodobi_kanalizacijo import PosodobiKanalizacijo
+
+
+def play_sound():
+    # Play the Windows system confirmation sound
+    winsound.MessageBeep(winsound.MB_OK)
 
 
 class MainWindow(QMainWindow):
@@ -49,7 +51,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_brisi_hs.clicked.connect(self.brisi_hs)
         self.ui.btn_preb.clicked.connect(self.vpisi_prebivalce)
         self.ui.btn_hsmid_crp.clicked.connect(self.dodaj_hsmid)
-        self.ui.btn_test.clicked.connect(self.test)
+        # self.ui.btn_test.clicked.connect(self.test)
         self.ui.btn_posodobi_kanal.clicked.connect(self.posodobi_kanalizacijo)
 
         self.progress_bar = self.ui.progress_bar
@@ -66,6 +68,7 @@ class MainWindow(QMainWindow):
         self.prebivalcihs = PrebivalciHs(comm=self.comm)
         self.hsmidcrp = HsmidCrp(comm=self.comm)
         self.hsmidcrp_worker = HsmidCrpWorker(comm=self.comm)
+        self.posodobi_kan = PosodobiKanalizacijo(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
 
@@ -79,70 +82,7 @@ class MainWindow(QMainWindow):
         # self.prenesi_hs()
         # self.brisi_hs()
         # self.dodaj_hsmid()
-        self.posodobi_worker()
-
-    def posodobi_worker(self):
-        print("Posodobi kanalizacijo na AGO...")
-
-        # Local paths
-        map_name = vars.map_name
-        group_layer_name = "Dev"
-        prj_path = os.path.join(vars.aprx_path, vars.aktualna_karta)
-        source_layer_1 = "Kanalizacijska linija"
-        source_layer_2 = "Kanalizacijski jašek"
-        print("Project", prj_path)
-
-        # Set portal login
-        portal = vars.ago_url
-        ago_user = vars.ago_username
-        ago_pass = vars.ago_password
-
-        # Set sharing
-        shrOrg = True
-        shrEveryone = False
-        shrGroups = ""
-
-        # Connect to AGO
-        print("Connecting to {}".format(portal))
-        gis = GIS(portal, ago_user, ago_pass)
-        print("Logged in as: " + gis.properties.user.username + "\n")
-
-        aprx = arcpy.mp.ArcGISProject(prj_path)
-
-        map_obj = aprx.listMaps(map_name)[0]
-        group_layer = [
-            layer
-            for layer in map_obj.listLayers()
-            if layer.isGroupLayer and layer.name == group_layer_name
-        ][0]
-
-        source_layer_1_obj = [
-            layer for layer in group_layer.listLayers() if layer.name == source_layer_1
-        ][0]
-        source_layer_2_obj = [
-            layer for layer in group_layer.listLayers() if layer.name == source_layer_2
-        ][0]
-
-        # Set temp staging files
-        temp_path = vars.aprx_path
-        sddraft = os.path.join(temp_path, "temp_file.sddraft")
-        sd = os.path.join(temp_path, "temp_file.sd")
-
-        # Assign environment, project and dictionaries
-        arcpy.env.overwriteOutput = True
-        prj = arcpy.mp.ArcGISProject(prj_path)
-        map_dict = {}
-        server_dict = {}
-
-        # source_map = prj.listMaps(source_map_name)[0]
-        # source_layer = source_map.listLayers
-        # source_layer = source_map.listLayers(source_layer_name)[0]
-        # print(source_layer)
-
-    def overwrite_web_layer(self, source_layer):
-        pass
-        # create sharing draft
-        # sharing_draft=map
+        self.posodobi_kanalizacijo()
 
     def test(self):
         pass
@@ -151,10 +91,6 @@ class MainWindow(QMainWindow):
         if self.wpk is None:
             self.wpk = PosodobiKanalizacijo()
         self.wpk.exec()
-
-    def play_sound(self):
-        # Play the Windows system confirmation sound
-        winsound.MessageBeep(winsound.MB_OK)
 
     def update_progress(self, value):
         self.progress_bar.setValue(value)
@@ -197,7 +133,7 @@ class MainWindow(QMainWindow):
                     self.thread.started.connect(self.worker.hsmid_crp(filename))
                     self.worker.status.connect(lambda: self.thread.quit())
                     self.thread.start()
-                    self.play_sound()
+                    play_sound()
                 else:
                     MsgBox("Najprej zapri datoteko " + filename)
                 #
@@ -250,7 +186,7 @@ class MainWindow(QMainWindow):
             self.thread.started.connect(self.worker.hsmid_crp(filename))
             self.worker.status.connect(lambda: self.thread.quit())
             self.thread.start()
-            self.play_sound()
+            play_sound()
 
             self.omarcgis.napolni_om_fc()
         else:

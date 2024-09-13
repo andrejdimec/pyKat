@@ -34,7 +34,7 @@ file_lovilec_olj = "Lovilec olj"
 file_greznice = "Greznice"
 file_objekt = "Kanalizacijski objekt"
 file_crpalisce = "Črpališče"
-file_kcn = "Čistilna naprava"
+file_kcn = "Cistilna naprava"
 
 project_path = vars.aprx_path
 map_name = vars.map_name
@@ -101,6 +101,7 @@ class PosodobiKanalizacijo(QDialog):
             arcpy.SignInToPortal(portal_url, username, password)
             gis = GIS(portal_url, username, password)
             self.logc("Uspešno.", green)
+            self.presledek()
 
         except Exception as e:
             self.logc("Napaka pri prijavi " + str(e), err)
@@ -111,12 +112,11 @@ class PosodobiKanalizacijo(QDialog):
             aprx = arcpy.mp.ArcGISProject(project)
             mymap = aprx.listMaps(map_name)[0]
 
-            self.presledek()
             for layer_pro in layer_ok:
                 layer = mymap.listLayers(layer_pro)[0]
                 output_service_name = layer_pro
                 # self.log("layer" + str(layer.name))
-                self.logc("Posodabljam layer " + layer_pro, black)
+                self.logc("Posodabljam layer " + layer_pro, blue)
                 search_result = gis.content.search(
                     query=layer_pro, item_type="Feature Layer"
                 )
@@ -137,11 +137,13 @@ class PosodobiKanalizacijo(QDialog):
                 # self.log(f"Scratch folder: {scratch_folder}")
 
                 # Define paths for service definition draft and staged service
-                sddraft_file = os.path.join(scratch_folder, f"{layer_pro}.sddraft")
-                sd = os.path.join(scratch_folder, f"{layer_pro}.sd")
-                thumb = os.path.join(scratch_folder, "Thumbnail.png")
+                sddraft_output_file = os.path.join(
+                    scratch_folder, f"{layer_pro}.sddraft"
+                )
+                sd_output_file = os.path.join(scratch_folder, f"{layer_pro}.sd")
+                thumb_output_file = os.path.join(scratch_folder, "Thumbnail.png")
 
-                novi = True
+                novi = False
 
                 if novi:
                     self.log("Novi način sddraft")
@@ -164,10 +166,10 @@ class PosodobiKanalizacijo(QDialog):
                     sddraft.useCIMSymbols = True
 
                     # Create Service Definition Draft file
-                    sddraft.exportToSDDraft(sddraft_file)
+                    sddraft.exportToSDDraft(sddraft_output_file)
 
                     # Read the .sddraft file
-                    docs = DOM.parse(sddraft_file)
+                    docs = DOM.parse(sddraft_output_file)
                     key_list = docs.getElementsByTagName("Key")
                     value_list = docs.getElementsByTagName("Value")
 
@@ -193,31 +195,62 @@ class PosodobiKanalizacijo(QDialog):
                             value_list[i].firstChild.nodeValue = GroupID
 
                     # Write to the .sddraft file
-                    f = open(sddraft_file, "w")
+                    f = open(sddraft_output_file, "w")
                     docs.writexml(f)
                     f.close()
 
                 else:
                     # Create a service definition draft
-                    self.presledek()
+                    # self.presledek()
                     self.log(f"Creating service definition draft...")
                     arcpy.mp.CreateWebLayerSDDraft(
                         map_or_layers=layer,  # Input layer object
-                        out_sddraft=sddraft,  # Output path for .sddraft file
+                        out_sddraft=sddraft_output_file,  # Output path for .sddraft file
                         service_name=output_service_name,  # Name of the web service to be published
                         service_type="HOSTING_SERVER",  # ArcGIS Online hosting server
                         server_type="MY_HOSTED_SERVICES",  # Service connection type for ArcGIS Online
                         folder_name="Kanalizacija",  # Folder on ArcGIS Online (empty means root folder)
                         overwrite_existing_service=True,  # Overwrite existing service with the same name
-                        summary=f"Web layer of the '{layer_pro}' layer",  # Summary for the service
-                        tags=f"arcpy, {layer_pro}, ArcGIS Online",  # Tags to describe the web layer
-                        description=f"This web layer is created from the '{layer_pro}' layer in ArcGIS Pro",
+                        summary=f"Web layer of the ArcGis Pro layer",  # Summary for the service
+                        tags=f"arcpy, ArcGIS Online",  # Tags to describe the web layer
+                        description=f"This web layer is created from the layer in ArcGIS Pro",
                         # Detailed description
                     )
+                    # Nastavi Sharing
+                    # Read the .sddraft file
+                    docs = DOM.parse(sddraft_output_file)
+                    key_list = docs.getElementsByTagName("Key")
+                    value_list = docs.getElementsByTagName("Value")
+
+                    # Change following to "true" to share
+                    SharetoOrganization = "true"
+                    SharetoEveryone = "true"
+                    SharetoGroup = "false"
+                    # If SharetoGroup is set to "true", uncomment line below and provide group IDs
+                    GroupID = ""  # GroupID = "f07fab920d71339cb7b1291e3059b7a8, e0fb8fff410b1d7bae1992700567f54a"
+
+                    # Each key has a corresponding value. In all the cases, value of key_list[i] is value_list[i].
+                    for i in range(key_list.length):
+                        if key_list[i].firstChild.nodeValue == "PackageUnderMyOrg":
+                            value_list[i].firstChild.nodeValue = SharetoOrganization
+                        if key_list[i].firstChild.nodeValue == "PackageIsPublic":
+                            value_list[i].firstChild.nodeValue = SharetoEveryone
+                        if key_list[i].firstChild.nodeValue == "PackageShareGroups":
+                            value_list[i].firstChild.nodeValue = SharetoGroup
+                        if (
+                            SharetoGroup == "true"
+                            and key_list[i].firstChild.nodeValue == "PackageGroupIDs"
+                        ):
+                            value_list[i].firstChild.nodeValue = GroupID
+
+                    # Write to the .sddraft file
+                    f = open(sddraft_output_file, "w")
+                    docs.writexml(f)
+                    f.close()
 
                 self.log(f"Staging service definition...")
                 try:
-                    arcpy.StageService_server(sddraft_file, sd)
+                    arcpy.server.StageService(sddraft_output_file, sd_output_file)
                     warnings = arcpy.GetMessages(1)
                     if warnings:
                         self.log(f"Warnings:")
@@ -226,23 +259,29 @@ class PosodobiKanalizacijo(QDialog):
                 except Exception as e:
                     dalje = False
                     self.logc("Staging error. - {}".format(str(e)), err)
-                    self.brisi_temp(sddraft, sd, thumb)
+                    self.brisi_temp(
+                        sddraft_output_file, sd_output_file, thumb_output_file
+                    )
                     # sys.exit("Napaka pri staging.")
 
                 # if dalje:
                 #     # Upload the staged service definition to ArcGIS Online
                 #     self.log(f"Uploading '{layer_pro}'...")
                 #     try:
-                #         arcpy.UploadServiceDefinition_server(sd, "MY_HOSTED_SERVICES")
+                #         arcpy.UploadServiceDefinition_server(
+                #             sd_output_file, "MY_HOSTED_SERVICES"
+                #         )
                 #         self.logc(f"Layer '{layer_pro}' - uspešno posodobljen.", green)
                 #
                 #     except Exception as e:
                 #         self.logc("Napaka pri upload - {}".format(str(e)), err)
-                #         self.brisi_temp(sddraft, sd, thumb)
+                #         self.brisi_temp(
+                #             sddraft_output_file, sd_output_file, thumb_output_file
+                #         )
                 #         dalje = False
                 #         # sys.exit("Napaka pri upload.")
 
-                # self.brisi_temp(sddraft, sd, thumb)
+                self.brisi_temp(sddraft_output_file, sd_output_file, thumb_output_file)
         # Konec
         # self.presledek()
         minutes, seconds = stop(start_time)
@@ -310,8 +349,8 @@ class PosodobiKanalizacijo(QDialog):
         self.cb_jaski.setChecked(False)
         self.cb_iztok.setChecked(False)
         self.cb_linije.setChecked(False)
-        self.cb_kcn.setChecked(False)
-        self.cb_greznice.setChecked(True)
+        self.cb_kcn.setChecked(True)
+        self.cb_greznice.setChecked(False)
         self.cb_objekt.setChecked(False)
         self.cb_crpalisce.setChecked(False)
         self.cb_lovilec.setChecked(False)
@@ -338,19 +377,20 @@ class PosodobiKanalizacijo(QDialog):
 
     def brisi_temp(self, sddraft, sd, thumb):
         # Zbriši temp datoteke
-        try:
-            self.log("Brisanje začasnih datotek...")
-            if os.path.exists(sddraft):
-                os.remove(sddraft)
-                # self.log(f"Deleted: {sddraft}")
-            if os.path.exists(sd):
-                os.remove(sd)
-                # self.log(f"Deleted: {sd}")
-            if os.path.exists(thumb):
-                os.remove(thumb)
-                # self.log(f"Deleted: {thumb}")
-        except Exception as e:
-            self.logc(f"Napaka pri brisanju temp datotek: {str(e)}", err)
+        # try:
+        #     self.log("Brisanje začasnih datotek...")
+        #     if os.path.exists(sddraft):
+        #         os.remove(sddraft)
+        #         # self.log(f"Deleted: {sddraft}")
+        #     if os.path.exists(sd):
+        #         os.remove(sd)
+        #         # self.log(f"Deleted: {sd}")
+        #     if os.path.exists(thumb):
+        #         os.remove(thumb)
+        #         # self.log(f"Deleted: {thumb}")
+        # except Exception as e:
+        #     self.logc(f"Napaka pri brisanju temp datotek: {str(e)}", err)
+        pass
 
 
 def stop(st):

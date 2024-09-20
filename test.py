@@ -1,76 +1,37 @@
 import arcpy
-import os
-import xml.dom.minidom as DOM
-import vars
 
-# Sign in to portal
+# Sign in to ArcGIS Online
 arcpy.SignInToPortal("https://www.arcgis.com", "komunala_radgona", "kora1234")
 
-# Set output file names
-outdir = r"D:\Temp"
+# List of layers to overwrite
+layers_to_overwrite = [
+    {"path": "C:/path/to/your/layer1.lyrx", "service_name": "ExistingServiceName1"},
+    {"path": "C:/path/to/your/layer2.lyrx", "service_name": "ExistingServiceName2"},
+    # Add more layers as needed
+]
 
-service_name = "jasek_razno10"
-sddraft_filename = service_name + ".sddraft"
-sddraft_output_filename = os.path.join(outdir, sddraft_filename)
-sd_filename = service_name + ".sd"
-sd_output_filename = os.path.join(outdir, sd_filename)
+for layer in layers_to_overwrite:
+    # Load the layer
+    layer_file = arcpy.mp.LayerFile(layer["path"])
+    map_doc = arcpy.mp.ArcGISProject("CURRENT").listMaps()[0]
+    map_doc.addLayer(layer_file)
 
-# Reference map to publish
-project = os.path.join(vars.aprx_path, vars.aprx_name)
-aprx = arcpy.mp.ArcGISProject(project)
-m = aprx.listMaps("map1")[0]
+    # Create a sharing draft
+    sharing_draft = map_doc.getWebLayerSharingDraft(
+        "HOSTING_SERVER", "FEATURE", layer["service_name"]
+    )
+    sharing_draft.overwriteExistingService = True
 
-# Create FeatureSharingDraft and set metadata, portal folder, export data properties, and CIM symbols
-server_type = "HOSTING_SERVER"
-sddraft = m.getWebLayerSharingDraft(server_type, "FEATURE", service_name)
-sddraft.credits = "These are credits"
-sddraft.description = "This is description"
-sddraft.summary = "This is summary"
-sddraft.tags = "tag1, tag2"
-sddraft.useLimitations = "These are use limitations"
-sddraft.portalFolder = ""
-sddraft.allowExporting = True
-sddraft.useCIMSymbols = True
+    # Stage the service
+    sddraft_path = f"C:/path/to/output/{layer['service_name']}.sddraft"
+    sharing_draft.exportToSDDraft(sddraft_path)
+    sd_path = f"C:/path/to/output/{layer['service_name']}.sd"
+    arcpy.StageService_server(sddraft_path, sd_path)
 
-# Create Service Definition Draft file
-sddraft.exportToSDDraft(sddraft_output_filename)
+    # Upload and publish the service
+    arcpy.UploadServiceDefinition_server(sd_path, "My Hosted Services")
 
-# Read the .sddraft file
-docs = DOM.parse(sddraft_output_filename)
-key_list = docs.getElementsByTagName("Key")
-value_list = docs.getElementsByTagName("Value")
+    # Clean up
+    map_doc.removeLayer(layer_file)
 
-# Change following to "true" to share
-SharetoOrganization = "false"
-SharetoEveryone = "true"
-SharetoGroup = "false"
-# If SharetoGroup is set to "true", uncomment line below and provide group IDs
-GroupID = (
-    ""  # GroupID = "f07fab920d71339cb7b1291e3059b7a8, e0fb8fff410b1d7bae1992700567f54a"
-)
-
-# Each key has a corresponding value. In all the cases, value of key_list[i] is value_list[i].
-for i in range(key_list.length):
-    if key_list[i].firstChild.nodeValue == "PackageUnderMyOrg":
-        value_list[i].firstChild.nodeValue = SharetoOrganization
-    if key_list[i].firstChild.nodeValue == "PackageIsPublic":
-        value_list[i].firstChild.nodeValue = SharetoEveryone
-    if key_list[i].firstChild.nodeValue == "PackageShareGroups":
-        value_list[i].firstChild.nodeValue = SharetoGroup
-    if SharetoGroup == "true" and key_list[i].firstChild.nodeValue == "PackageGroupIDs":
-        value_list[i].firstChild.nodeValue = GroupID
-
-# Write to the .sddraft file
-f = open(sddraft_output_filename, "w")
-docs.writexml(f)
-f.close()
-
-# Stage Service
-print("Start Staging")
-arcpy.server.StageService(sddraft_output_filename, sd_output_filename)
-
-# Share to portal
-print("Start Uploading")
-arcpy.server.UploadServiceDefinition(sd_output_filename, server_type)
-
-print("Finish Publishing")
+print("All layers have been successfully overwritten.")

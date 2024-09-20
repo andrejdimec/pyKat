@@ -1,11 +1,8 @@
 import sys
-
 import arcpy
 from arcgis.gis import GIS
 import os
 import xml.dom.minidom as DOM
-from PySide6 import QtCore
-from sympy import false
 
 import vars
 from PySide6.QtWidgets import QDialog
@@ -16,6 +13,7 @@ from ui_frm_posodobi_kanalizacijo import Ui_frmPosodobiKan
 from comm import Comm
 from logger import Logger
 import time
+
 
 black = vars.black
 red = vars.darkRed
@@ -29,7 +27,7 @@ dir_linije = "Kanalizacijske linije"
 dir_jaski = "Kanalizacijski jaški"
 file_linije = "Kanalizacijska linija"
 file_jaski = "Kanalizacijski jašek"
-file_iztok = "Izpus"
+file_iztok = "Izpust"
 file_lovilec_olj = "Lovilec olj"
 file_greznice = "Greznice"
 file_objekt = "Kanalizacijski objekt"
@@ -46,6 +44,10 @@ password = vars.ago_password
 
 layer_izbran = []
 layer_ok = []  # Končni izbor po preverjanju
+
+novi = False
+upload = True
+brisanje = True
 
 
 class PosodobiKanalizacijo(QDialog):
@@ -72,9 +74,11 @@ class PosodobiKanalizacijo(QDialog):
         self.comm.signalText[str, Qt.GlobalColor].connect(self.izpis_v_text_box)
         self.btn_posodobi = self.ui.btn_posodobi
         self.btn_posodobi.clicked.connect(self.posodobi)
+        self.ui.btn_izberi_vse.clicked.connect(self.izberi_vse)
+        self.ui.btn_izberi_nic.clicked.connect(self.izberi_nic)
 
         # Init
-        self.zacetek()
+        # self.zacetek()
 
         # Combobox
         self.cb_jaski.stateChanged.connect(self.doloci_layerje)
@@ -86,7 +90,6 @@ class PosodobiKanalizacijo(QDialog):
         self.cb_lovilec.stateChanged.connect(self.doloci_layerje)
         self.cb_crpalisce.stateChanged.connect(self.doloci_layerje)
 
-        self.doloci_layerje()
         # self.posodobi_worker()
 
     # Glavna rutina
@@ -96,12 +99,12 @@ class PosodobiKanalizacijo(QDialog):
 
         # Prijavi se na AGOL
         self.presledek()
-        self.log("Prijava v ArcGIS Online...")
+        self.log(poudarek("Prijava v ArcGIS Online..."))
         try:
             arcpy.SignInToPortal(portal_url, username, password)
             gis = GIS(portal_url, username, password)
             self.logc("Uspešno.", green)
-            self.presledek()
+            # self.presledek()
 
         except Exception as e:
             self.logc("Napaka pri prijavi " + str(e), err)
@@ -113,17 +116,22 @@ class PosodobiKanalizacijo(QDialog):
             mymap = aprx.listMaps(map_name)[0]
 
             for layer_pro in layer_ok:
+                self.presledek()
                 layer = mymap.listLayers(layer_pro)[0]
-                output_service_name = layer_pro
-                # self.log("layer" + str(layer.name))
-                self.logc("Posodabljam layer " + layer_pro, blue)
+                output_service_name = remove_csz(layer.name)
+                # self.log("utput_service_name " + output_service_name)
+                self.logc(poudarek("Pripravljam layer " + output_service_name), blue)
                 search_result = gis.content.search(
-                    query=layer_pro, item_type="Feature Layer"
+                    query=output_service_name, item_type="Feature Layer"
                 )
                 if search_result:
-                    self.logc(f"Layer že obstaja -> posodabljam.", green)
+                    self.logc(
+                        f"Layer bo posodobljen, ker na portalu že obstaja.", green
+                    )
                 else:
-                    self.logc(f"Layer še ne obstaja -> dodajam.", red)
+                    self.logc(
+                        f"Layer bo dodan na novo, ker na portalu še ne obstaja.", red
+                    )
 
                 # Dejansko posodobi
 
@@ -138,12 +146,12 @@ class PosodobiKanalizacijo(QDialog):
 
                 # Define paths for service definition draft and staged service
                 sddraft_output_file = os.path.join(
-                    scratch_folder, f"{layer_pro}.sddraft"
+                    scratch_folder, f"{output_service_name}.sddraft"
                 )
-                sd_output_file = os.path.join(scratch_folder, f"{layer_pro}.sd")
+                sd_output_file = os.path.join(
+                    scratch_folder, f"{output_service_name}.sd"
+                )
                 thumb_output_file = os.path.join(scratch_folder, "Thumbnail.png")
-
-                novi = False
 
                 if novi:
                     self.log("Novi način sddraft")
@@ -156,6 +164,7 @@ class PosodobiKanalizacijo(QDialog):
                     # sddraft = mymap.getWebLayerSharingDraft(
                     #     server_type, "FEATURE", output_service_name
                     # )
+                    sddraft.serviceName = output_service_name
                     sddraft.credits = "These are credits"
                     sddraft.description = "This is description"
                     sddraft.summary = "This is summary"
@@ -202,7 +211,8 @@ class PosodobiKanalizacijo(QDialog):
                 else:
                     # Create a service definition draft
                     # self.presledek()
-                    self.log(f"Creating service definition draft...")
+
+                    self.log(poudarek(f"Creating service definition draft..."))
                     arcpy.mp.CreateWebLayerSDDraft(
                         map_or_layers=layer,  # Input layer object
                         out_sddraft=sddraft_output_file,  # Output path for .sddraft file
@@ -248,14 +258,16 @@ class PosodobiKanalizacijo(QDialog):
                     docs.writexml(f)
                     f.close()
 
-                self.log(f"Staging service definition...")
+                self.log(poudarek(f"Staging service definition..."))
                 try:
                     arcpy.server.StageService(sddraft_output_file, sd_output_file)
                     warnings = arcpy.GetMessages(1)
                     if warnings:
-                        self.log(f"Warnings:")
-                        for warning in warnings:
-                            self.log(f"\t{warning}")
+                        self.logc(f"Warnings:", err)
+                        self.log(warnings)
+                        # for warning in warnings:
+                        #     self.log(f"{warning}")
+                        # self.presledek()
                 except Exception as e:
                     dalje = False
                     self.logc("Staging error. - {}".format(str(e)), err)
@@ -264,26 +276,29 @@ class PosodobiKanalizacijo(QDialog):
                     )
                     # sys.exit("Napaka pri staging.")
 
-                # if dalje:
-                #     # Upload the staged service definition to ArcGIS Online
-                #     self.log(f"Uploading '{layer_pro}'...")
-                #     try:
-                #         arcpy.UploadServiceDefinition_server(
-                #             sd_output_file, "MY_HOSTED_SERVICES"
-                #         )
-                #         self.logc(f"Layer '{layer_pro}' - uspešno posodobljen.", green)
-                #
-                #     except Exception as e:
-                #         self.logc("Napaka pri upload - {}".format(str(e)), err)
-                #         self.brisi_temp(
-                #             sddraft_output_file, sd_output_file, thumb_output_file
-                #         )
-                #         dalje = False
-                #         # sys.exit("Napaka pri upload.")
+                if dalje and upload:
+                    # Upload the staged service definition to ArcGIS Online
+                    self.log(poudarek(f"Uploading '{output_service_name}'..."))
+                    try:
+                        arcpy.UploadServiceDefinition_server(
+                            sd_output_file, "MY_HOSTED_SERVICES"
+                        )
+                        self.logc(
+                            f"Layer '{output_service_name}' - uspešno posodobljen.",
+                            green,
+                        )
+
+                    except Exception as e:
+                        self.logc("Napaka pri upload - {}".format(str(e)), err)
+                        self.brisi_temp(
+                            sddraft_output_file, sd_output_file, thumb_output_file
+                        )
+                        dalje = False
+                        # sys.exit("Napaka pri upload.")
 
                 self.brisi_temp(sddraft_output_file, sd_output_file, thumb_output_file)
         # Konec
-        # self.presledek()
+        self.presledek()
         minutes, seconds = stop(start_time)
         self.logc(f"Končano v {minutes} min {seconds} sek.", blue)
         if dalje:
@@ -345,15 +360,29 @@ class PosodobiKanalizacijo(QDialog):
         # for lyr in layer_ok:
         #     self.log("ok: " + lyr)
 
-    def zacetek(self):
+    def izberi_vse(self):
+        self.cb_jaski.setChecked(True)
+        self.cb_iztok.setChecked(True)
+        self.cb_linije.setChecked(True)
+        self.cb_kcn.setChecked(True)
+        self.cb_greznice.setChecked(True)
+        self.cb_objekt.setChecked(True)
+        self.cb_crpalisce.setChecked(True)
+        self.cb_lovilec.setChecked(True)
+
+    def izberi_nic(self):
         self.cb_jaski.setChecked(False)
         self.cb_iztok.setChecked(False)
         self.cb_linije.setChecked(False)
-        self.cb_kcn.setChecked(True)
+        self.cb_kcn.setChecked(False)
         self.cb_greznice.setChecked(False)
         self.cb_objekt.setChecked(False)
         self.cb_crpalisce.setChecked(False)
         self.cb_lovilec.setChecked(False)
+
+    def zacetek(self):
+        # self.izberi_nic()
+        self.doloci_layerje()
 
     def preveri_obstoj(self):
         # Preveri če layerji obstajajo na online in če so ista imena v Arcgis pro in če bodo overwriten
@@ -376,21 +405,37 @@ class PosodobiKanalizacijo(QDialog):
         self.log("\n")
 
     def brisi_temp(self, sddraft, sd, thumb):
-        # Zbriši temp datoteke
-        # try:
-        #     self.log("Brisanje začasnih datotek...")
-        #     if os.path.exists(sddraft):
-        #         os.remove(sddraft)
-        #         # self.log(f"Deleted: {sddraft}")
-        #     if os.path.exists(sd):
-        #         os.remove(sd)
-        #         # self.log(f"Deleted: {sd}")
-        #     if os.path.exists(thumb):
-        #         os.remove(thumb)
-        #         # self.log(f"Deleted: {thumb}")
-        # except Exception as e:
-        #     self.logc(f"Napaka pri brisanju temp datotek: {str(e)}", err)
-        pass
+        if brisanje:
+            # Zbriši temp datoteke
+            try:
+                self.log(poudarek("Brisanje začasnih datotek..."))
+                if os.path.exists(sddraft):
+                    os.remove(sddraft)
+                    # self.log(f"Deleted: {sddraft}")
+                if os.path.exists(sd):
+                    os.remove(sd)
+                    # self.log(f"Deleted: {sd}")
+                if os.path.exists(thumb):
+                    os.remove(thumb)
+                    # self.log(f"Deleted: {thumb}")
+            except Exception as e:
+                self.logc(f"Napaka pri brisanju temp datotek: {str(e)}", err)
+
+
+def remove_csz(inp):
+    print("inp ", inp)
+    inp = inp.replace("Č", "C")
+    inp = inp.replace("č", "c")
+    inp = inp.replace("Š", "S")
+    inp = inp.replace("š", "s")
+    inp = inp.replace("Ž", "Z")
+    inp = inp.replace("ž", "z")
+    return inp
+
+
+def poudarek(inp):
+    outp = "#  " + inp + "  #"
+    return outp
 
 
 def stop(st):

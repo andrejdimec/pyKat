@@ -20,11 +20,12 @@ from logger import Logger
 from comm import Comm
 
 from aglo_hs import AgloHs
-from om_v_arcgis import OmArcgis
+from om_v_arcgis import OmArcgisWorker
 from prenesi_hs import HsArcgis
 from brisi_hs_izven import BrisiHs
 from prebivalci_v_hs import PrebivalciHs
-from hsmid_v_crp import HsmidCrp
+
+# from hsmid_v_crp import HsmidCrp
 from hsmid_v_crp_worker import HsmidCrpWorker
 from posodobi_kanalizacijo import PosodobiKanalizacijo
 
@@ -62,12 +63,13 @@ class MainWindow(QMainWindow):
         self.logger = Logger(comm=self.comm)
 
         self.aglohs = AgloHs(comm=self.comm)
-        self.omarcgis = OmArcgis(comm=self.comm)
+
         self.hsarcgis = HsArcgis(comm=self.comm)
         self.brisihs = BrisiHs(comm=self.comm)
         self.prebivalcihs = PrebivalciHs(comm=self.comm)
-        self.hsmidcrp = HsmidCrp(comm=self.comm)
+        # self.hsmidcrp = HsmidCrp(comm=self.comm)
         self.hsmidcrp_worker = HsmidCrpWorker(comm=self.comm)
+        self.omarcgis_worker = OmArcgisWorker(comm=self.comm)
         self.posodobi_kan = PosodobiKanalizacijo(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
@@ -82,7 +84,7 @@ class MainWindow(QMainWindow):
         # self.prenesi_hs()
         # self.brisi_hs()
         # self.dodaj_hsmid()
-        self.posodobi_kanalizacijo()
+        # self.posodobi_kanalizacijo()
 
     def test(self):
         pass
@@ -111,6 +113,26 @@ class MainWindow(QMainWindow):
             return False
         except:
             return True
+
+    def odjemna_arcgis(self):
+        # Prenesi odjemna mesti iz bass v kataster
+        msgBox = MsgBoxYesNo("Želiš prenesti nova odjemna mesta v kataster?", self)
+        if msgBox.clickedButton() == msgBox.buttonY:
+            self.progress_bar.setVisible(True)
+            self.thread = QThread()
+            self.worker = self.omarcgis_worker
+            self.worker.moveToThread(self.thread)
+
+            self.worker.progress.connect(self.update_progress)
+            self.worker.status.connect(self.update_status)
+            self.thread.started.connect(self.worker.napolni_om_fc())
+            self.worker.status.connect(lambda: self.thread.quit())
+            self.thread.start()
+            play_sound()
+
+            # self.omarcgis_worker.napolni_om_fc()
+        else:
+            print("Izbrano ne")
 
     def dodaj_hsmid(self):
         # V Crp Excel dodaj polji za Hsmid in EIDHS
@@ -171,26 +193,6 @@ class MainWindow(QMainWindow):
         self.logWindow.append(text)
         self.logWindow.repaint()
         print("log:", text)
-
-    def odjemna_arcgis(self):
-        # Prenesi odjemna mesti iz bass v kataster
-        msgBox = MsgBoxYesNo("Želiš prenesti nova odjemna mesta v kataster?", self)
-        if msgBox.clickedButton() == msgBox.buttonY:
-            self.progress_bar.setVisible(True)
-            self.thread = QThread()
-            self.worker = self.hsmidcrp_worker
-            self.worker.moveToThread(self.thread)
-
-            self.worker.progress.connect(self.update_progress)
-            self.worker.status.connect(self.update_status)
-            self.thread.started.connect(self.worker.hsmid_crp(filename))
-            self.worker.status.connect(lambda: self.thread.quit())
-            self.thread.start()
-            play_sound()
-
-            self.omarcgis.napolni_om_fc()
-        else:
-            print("Izbrano ne")
 
     def aglo_hs(self):
         self.aglohs.agloVoda()

@@ -51,5 +51,5 @@ all_om_sql = """
                     bass_location_list.location_hsmid,  
                      inkasso_2021_komercialisti_radgona.KOMERCIALIST_SIFRA
             ORDER BY omnaslov
-            LIMIT 250
+            
 """

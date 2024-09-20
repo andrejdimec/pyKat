@@ -61,7 +61,7 @@ class Ui_frmPosodobiKan(object):
         self.btn_posodobi.setGeometry(QRect(20, 330, 91, 41))
         self.btn_cancel = QPushButton(self.frame)
         self.btn_cancel.setObjectName(u"btn_cancel")
-        self.btn_cancel.setGeometry(QRect(140, 330, 91, 41))
+        self.btn_cancel.setGeometry(QRect(300, 330, 91, 41))
         self.cb_iztok = QCheckBox(self.frame)
         self.cb_iztok.setObjectName(u"cb_iztok")
         self.cb_iztok.setGeometry(QRect(20, 150, 143, 20))
@@ -80,6 +80,12 @@ class Ui_frmPosodobiKan(object):
         self.cb_lovilec = QCheckBox(self.frame)
         self.cb_lovilec.setObjectName(u"cb_lovilec")
         self.cb_lovilec.setGeometry(QRect(20, 180, 201, 20))
+        self.btn_izberi_vse = QPushButton(self.frame)
+        self.btn_izberi_vse.setObjectName(u"btn_izberi_vse")
+        self.btn_izberi_vse.setGeometry(QRect(120, 330, 80, 41))
+        self.btn_izberi_nic = QPushButton(self.frame)
+        self.btn_izberi_nic.setObjectName(u"btn_izberi_nic")
+        self.btn_izberi_nic.setGeometry(QRect(210, 330, 80, 41))
 
         self.horizontalLayout.addWidget(self.frame)
 
@@ -121,5 +127,7 @@ class Ui_frmPosodobiKan(object):
         self.cb_crpalisce.setText(QCoreApplication.translate("frmPosodobiKan", u"\u010crpali\u0161\u010de", None))
         self.cb_greznica.setText(QCoreApplication.translate("frmPosodobiKan", u"Greznica", None))
         self.cb_lovilec.setText(QCoreApplication.translate("frmPosodobiKan", u"Lovilec olj", None))
+        self.btn_izberi_vse.setText(QCoreApplication.translate("frmPosodobiKan", u"Izberi vse", None))
+        self.btn_izberi_nic.setText(QCoreApplication.translate("frmPosodobiKan", u"Izberi ni\u010d", None))
     # retranslateUi
 

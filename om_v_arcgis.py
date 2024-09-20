@@ -1,9 +1,13 @@
+from PySide6.QtCore import Signal
 import arcpy
+from openpyxl.styles.builtins import comma
+
 import vars
 from arcpy import env
 from logger import Logger
 from comm import Comm
 from mysql_rutine import ConnectMySql
+import time
 
 black = vars.black
 red = vars.darkRed
@@ -12,32 +16,49 @@ blue = vars.darkBlue
 err = vars.red
 
 
-class OmArcgis:
+def stop(st):
+    end_time = time.time()
+    elapsed_time = end_time - st
+    m = int(elapsed_time / 60)
+    s = int(elapsed_time % 60)
+    return m, s
+
+
+class OmArcgisWorker(Comm):
     env.workspace = vars.wkspace
+    progress = Signal(int)
+    status = Signal(str)
 
     def __init__(self, comm=Comm()):
-        super(OmArcgis, self).__init__()
+        super(OmArcgisWorker, self).__init__()
         self.comm = comm
         self.logger = Logger(comm=self.comm)
 
-    def log(self, in_str, barva):
+    def log(self, in_str):
+        self.logger.izpisi(in_str, black)
+
+    def logc(self, in_str, barva):
         self.logger.izpisi(in_str, barva)
 
+    def presledek(self):
+        self.log("\n")
+
     def napolni_om_fc(self):
+        start_time = time.time()
         env.workspace = vars.wkspace
         brez_hsmid = []
         brez_hsmid_in_xy = []
         om_fc = r"Odjemna_mesta\Odjemna_mesta_auto"
         self.presledek()
-        self.log("Prenašam OM iz Bass v ArcGis " + om_fc, green)
+        self.logc("Prenašam OM iz Bass v ArcGis " + om_fc, green)
 
         result_om = ConnectMySql().get_all_om()
         stevec = 0
-
-        self.log("Prebrano iz Bass " + str(len(result_om))+' odjemnih mest', black)
+        rows = len(result_om)
+        self.log("Prebrano iz Bass " + str(len(result_om)) + " odjemnih mest")
 
         if result_om:
-            self.log("Iščem storitve za odjemna mesta...", black)
+            self.log("Iščem storitve za odjemna mesta...")
             for rowl in result_om:
                 stevec += 1
                 om_id = rowl[0]
@@ -107,19 +128,22 @@ class OmArcgis:
 
                 elif result_storitve:
                     print("Nima storitev")
+
+                    # Update status & progress bar
+                self.progress.emit(int(stevec / rows * 100))
+                self.status.emit(f"{stevec} / {rows}")
             # For rowl
 
             # izprazni_fc(om_fc)
             self.izprazni_fc(om_fc)
 
-            print("Zapisujem v Arcgis (" + str(len(result_om)) + ")")
-
-            self.log("Zapisujem v Arcgis " +str(len(result_om)) + " odjemnih mest", black)
+            self.log("Zapisujem v Arcgis " + str(len(result_om)) + " odjemnih mest")
 
             # for i in range(len(brez_hsmid_in_xy)):
             #     self.log(str(i),green)
             # self.log(str(brez_hsmid_in_xy), green)
             # Zapiši tabelo v ArcGis om_table
+            stevec = 0
 
             fields = [
                 "id_om",
@@ -148,10 +172,11 @@ class OmArcgis:
             ]
             edit = arcpy.da.Editor(env.workspace)
             edit.startEditing(False, True)
+            edit.startOperation()
 
             for row in result_om:
+                stevec += 1
                 try:
-                    edit.startOperation()
                     with arcpy.da.InsertCursor(om_fc, fields) as cursor:
                         new_row = (
                             row[0],  # om id
@@ -180,37 +205,43 @@ class OmArcgis:
                         )
                         cursor.insertRow(new_row)
                 except Exception as e:
-                    self.napaka(e)
-                    print("Napaka pri dodajanju om", e)
+                    # self.napaka(e)
+                    self.logc("Napaka pri dodajanju om " + str(e), err)
                 finally:
-                    edit.stopOperation()
+                    self.progress.emit(int(stevec / rows * 100))
+                    self.status.emit(f"{stevec} / {rows}")
 
+            edit.stopOperation()
             self.presledek()
-            self.log(
+            self.logc(
                 "Odjemna mesta brez HSMID, imajo pa x,y (" + str(len(brez_hsmid)) + ")",
-                green,
+                blue,
             )
             for vrsta in brez_hsmid:
                 print(vrsta)
-                self.log(str(vrsta), black)
+                self.log(str(vrsta))
 
             self.presledek()
-            self.log(
+            self.logc(
                 "Odjemna mesta brez HSMID in brez koordinat ("
                 + str(len(brez_hsmid_in_xy))
                 + ")",
-                green,
+                blue,
             )
             for vrsta in brez_hsmid_in_xy:
                 print(vrsta)
-                self.log(str(vrsta), black)
+                self.log(str(vrsta))
             self.presledek()
             # Končaj editing
             edit.stopEditing(True)
-            self.log("Končano.", blue)
+            self.presledek()
+            minutes, seconds = stop(start_time)
+
+            self.logc(f"Končano v {minutes} min {seconds} sek.", blue)
+            # self.log("Končano.", blue)
 
         else:
-            self.log("Napaka pri prenosu iz Bass!", err)
+            self.logc("Napaka pri prenosu iz Bass!", err)
             return
 
     def izprazni_fc(self, fc):
@@ -219,16 +250,13 @@ class OmArcgis:
         try:
             arcpy.management.DeleteRows(fc)
             # arcpy.management.TruncateTable(fc)
-            self.log("Praznim datoteko " + str(fc), black)
+            self.log("Praznim datoteko " + str(fc))
         except Exception as e:
             self.napaka(e)
 
-    def presledek(self):
-        self.log("\n", black)
-
     def napaka(self, e):
         self.presledek()
-        self.log("Napaka! " + str(e), err)
+        self.logc("Napaka! " + str(e), err)
 
 
 def preveri_upravitelja(upravitelj_id):

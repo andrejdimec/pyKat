@@ -4,13 +4,14 @@ from PySide6.QtCore import Qt
 # wkspace = r"D:\Kataster\GR_D96\Database\GR_D96_1.gdb"
 
 # Arcgis pro
-wkspace = r"D:\Kataster\GR_D96\Database\GRD96_delovna.gdb"
-# aktualna_karta = r"Kataster_2024_08.aprx"
-aktualna_karta = r"dev_project.aprx"
-aprx_name = r"dev_project.aprx"
+wkspace = r"D:\Kataster\GR_D96\Database\GR_D96.gdb"
+# aktualna_karta = r"Kataster_2024_09.aprx"
+# aktualna_karta = r"dev_project.aprx"
+# aprx_name = r"dev_project.aprx"
+aprx_name = r"Kataster_2024_09.aprx"
 aprx_path = r"d:\Kataster\GR_D96\Projects"
-# map_name = "Kataster D96"
-map_name = "map1"
+map_name = "Kataster D96"
+# map_name = "map1"
 
 
 # Arcgis Online

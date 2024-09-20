@@ -4,21 +4,21 @@
     <Databases xsi:type="typens:ArrayOfSVCDatabase"/>
     <Resources xsi:type="typens:ArrayOfSVCResource">
         <SVCResource xsi:type="typens:SVCResource">
-            <ID>DC62E086-0990-4FF3-AD65-C9199102C84C</ID>
+            <ID>594D4369-5B7F-434B-90EE-74E9611E9824</ID>
             <Name>map.json</Name>
             <OnPremisePath>d:\Kataster\GR_D96\Projects\dev_project.aprx</OnPremisePath>
             <StagingPath/>
             <ServerPath/>
             <InPackagePath/>
             <OnServerName/>
-            <ClientName>Ryzen</ClientName>
+            <ClientName>Kataster2024</ClientName>
             <CIMPath>CIMPATH=map/map.json</CIMPath>
             <RepositoryID>4</RepositoryID>
         </SVCResource>
     </Resources>
-    <ID>1AEE4303-4CA3-461F-82D6-0FA2B7B4CD04</ID>
+    <ID>30E8D3D7-C126-4E3B-B633-78E2E2706A21</ID>
     <Name>Èrpališèe</Name>
-    <OnPremisePath>C:\Users\andrej\AppData\Local\Temp\scratch</OnPremisePath>
+    <OnPremisePath>C:\Users\andrejd\AppData\Local\Temp\scratch</OnPremisePath>
     <StagingPath/>
     <ServerPath/>
     <InPackagePath/>
@@ -52,7 +52,7 @@
             <PropertySetProperty xsi:type="typens:PropertySetProperty">
                 <Key>ServerConnectionString</Key>
                 <Value xsi:type="xs:string">
-                    SERVERTYPE=esriAGSServerTypeAGO;CONNECTIONMODE=esriAGSConnectionModeAdmin;SERVERURL=https://www.arcgis.com/;TOKENPROVIDERTYPE=https://www.arcgis.com/;REFERER=http://www.esri.com/AGO/A3E69559-CB8D-4B9D-A111-BBDA550FE165
+                    SERVERTYPE=esriAGSServerTypeAGO;CONNECTIONMODE=esriAGSConnectionModeAdmin;SERVERURL=https://www.arcgis.com/;TOKENPROVIDERTYPE=https://www.arcgis.com/;REFERER=http://www.esri.com/AGO/66C61289-CCC4-43A8-895D-34E78943DC48
                 </Value>
             </PropertySetProperty>
             <PropertySetProperty xsi:type="typens:PropertySetProperty">
@@ -223,14 +223,14 @@
     </TemplateSettings>
     <KeepExistingData>false</KeepExistingData>
     <KeepExistingMapCache>false</KeepExistingMapCache>
-    <ClientHostName>Ryzen</ClientHostName>
+    <ClientHostName>Kataster2024</ClientHostName>
     <OnServerName/>
     <Configurations xsi:type="typens:ArrayOfSVCConfiguration">
         <SVCConfiguration xsi:type="typens:SVCConfiguration">
-            <ID>30DE9744-A624-473A-B9E0-61BC9695D525</ID>
+            <ID>1B668A5E-E5F5-42C9-8E57-F3CD0F66A75B</ID>
             <Name>Èrpališèe</Name>
             <TypeName>FeatureServer</TypeName>
-            <ResourceID>DC62E086-0990-4FF3-AD65-C9199102C84C</ResourceID>
+            <ResourceID>594D4369-5B7F-434B-90EE-74E9611E9824</ResourceID>
             <ServiceFolder>Kanalizacija</ServiceFolder>
             <DataFolder/>
             <Definition xsi:type="typens:SVCConfigurationDefinition">
@@ -523,7 +523,7 @@
     </ItemInfo>
     <Metadata xsi:type="typens:XmlPropertySet">
         <XmlDoc>&lt;?xml version=&quot;1.0&quot;?&gt;
-            &lt;metadata xml:lang=&quot;sl&quot;&gt;&lt;Esri&gt;&lt;CreaDate&gt;20240913&lt;/CreaDate&gt;&lt;CreaTime&gt;12552100&lt;/CreaTime&gt;&lt;ArcGISFormat&gt;1.0&lt;/ArcGISFormat&gt;&lt;SyncOnce&gt;TRUE&lt;/SyncOnce&gt;&lt;/Esri&gt;&lt;/metadata&gt;
+            &lt;metadata xml:lang=&quot;sl&quot;&gt;&lt;Esri&gt;&lt;CreaDate&gt;20240916&lt;/CreaDate&gt;&lt;CreaTime&gt;10245100&lt;/CreaTime&gt;&lt;ArcGISFormat&gt;1.0&lt;/ArcGISFormat&gt;&lt;SyncOnce&gt;TRUE&lt;/SyncOnce&gt;&lt;/Esri&gt;&lt;/metadata&gt;
         </XmlDoc>
     </Metadata>
 </SVCManifest>

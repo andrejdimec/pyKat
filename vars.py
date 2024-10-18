@@ -8,7 +8,7 @@ wkspace = r"D:\Kataster\GR_D96\Database\GR_D96.gdb"
 # aktualna_karta = r"Kataster_2024_09.aprx"
 # aktualna_karta = r"dev_project.aprx"
 # aprx_name = r"dev_project.aprx"
-aprx_name = r"Kataster_2024_09.aprx"
+aprx_name = r"Kataster_2024_10.aprx"
 aprx_path = r"d:\Kataster\GR_D96\Projects"
 map_name = "Kataster D96"
 # map_name = "map1"
@@ -32,8 +32,10 @@ msdbname = "Komunala_DB"
 # MYSQL baza
 mydbhost = "213.250.28.186"
 mydbport = 3306
-mydbuser = "dimec"
-mydbpass = "6iXrN6J8@J"
+# mydbuser = "dimec"
+# mydbpass = "6iXrN6J8@J"
+mydbuser = "bass"
+mydbpass = "qTKt7A3Le"
 mydbname = "radgona"
 
 # Razno

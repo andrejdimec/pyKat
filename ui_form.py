@@ -160,6 +160,16 @@ class Ui_MainWindow(object):
         self.btn_hsmid_crp.setObjectName(u"btn_hsmid_crp")
         self.btn_hsmid_crp.setGeometry(QRect(10, 290, 131, 40))
         self.btn_hsmid_crp.setMinimumSize(QSize(100, 40))
+        self.btn_infotim = QPushButton(self.frame_2)
+        self.btn_infotim.setObjectName(u"btn_infotim")
+        self.btn_infotim.setGeometry(QRect(10, 340, 131, 40))
+        self.btn_infotim.setMinimumSize(QSize(100, 40))
+        self.textEdit_8 = QTextEdit(self.frame_2)
+        self.textEdit_8.setObjectName(u"textEdit_8")
+        self.textEdit_8.setGeometry(QRect(150, 340, 271, 41))
+        self.textEdit_8.setFont(font1)
+        self.textEdit_8.setFrameShape(QFrame.Shape.NoFrame)
+        self.textEdit_8.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.center_left_layout.addWidget(self.frame_2)
 
@@ -335,6 +345,16 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">V Excel datoteko s CRP dodaj HSMID za stalno in za\u010dasno bivali\u0161\u010de</p></body></html>", None))
         self.btn_hsmid_crp.setText(QCoreApplication.translate("MainWindow", u"HSMID v CRP", None))
+        self.btn_infotim.setText(QCoreApplication.translate("MainWindow", u"Uvozi Infotim", None))
+        self.textEdit_8.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Uvozi vodomere iz Infotim aplikacije </p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">v ArcGIS Pro</p></body></html>", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"ArcGis Online", None))
         self.btn_om_arcgis_ol.setText(QCoreApplication.translate("MainWindow", u"OM ->ArcGis OL", None))
         self.btn_aglo_om.setText(QCoreApplication.translate("MainWindow", u"Aglo ->OM OL", None))

@@ -54,10 +54,11 @@ class OmArcgisWorker(Comm):
 
         result_om = ConnectMySql().get_all_om()
         stevec = 0
-        rows = len(result_om)
-        self.log("Prebrano iz Bass " + str(len(result_om)) + " odjemnih mest")
 
         if result_om:
+            rows = len(result_om)
+            self.log("Prebrano iz Bass " + str(len(result_om)) + " odjemnih mest")
+
             self.log("Iščem storitve za odjemna mesta...")
             for rowl in result_om:
                 stevec += 1
@@ -142,6 +143,7 @@ class OmArcgisWorker(Comm):
             # for i in range(len(brez_hsmid_in_xy)):
             #     self.log(str(i),green)
             # self.log(str(brez_hsmid_in_xy), green)
+
             # Zapiši tabelo v ArcGis om_table
             stevec = 0
 

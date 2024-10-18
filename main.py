@@ -28,6 +28,7 @@ from prebivalci_v_hs import PrebivalciHs
 # from hsmid_v_crp import HsmidCrp
 from hsmid_v_crp_worker import HsmidCrpWorker
 from posodobi_kanalizacijo import PosodobiKanalizacijo
+from uvozi_infotim_vodomere import UvoziInfotim
 
 
 def play_sound():
@@ -71,6 +72,7 @@ class MainWindow(QMainWindow):
         self.hsmidcrp_worker = HsmidCrpWorker(comm=self.comm)
         self.omarcgis_worker = OmArcgisWorker(comm=self.comm)
         self.posodobi_kan = PosodobiKanalizacijo(comm=self.comm)
+        self.uvozi_infotim_worker = UvoziInfotim(comm=self.comm)
 
         self.ui.label_wks.setText("Workspace: " + str(vars.wkspace))
 
@@ -85,6 +87,7 @@ class MainWindow(QMainWindow):
         # self.brisi_hs()
         # self.dodaj_hsmid()
         # self.posodobi_kanalizacijo()
+        self.uvozi_vodomere()
 
     def test(self):
         pass
@@ -133,6 +136,65 @@ class MainWindow(QMainWindow):
             # self.omarcgis_worker.napolni_om_fc()
         else:
             print("Izbrano ne")
+
+    def uvozi_vodomere(self):
+        # Uvozi vodomere iz excel izvožen iz infotim portala
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        dialog.setNameFilter("Excel datoteke (*.xls, *.xlsx")
+        dialog.setViewMode(QFileDialog.ViewMode.Detail)
+        dialog.setDirectory("d:/podatki/")
+        if dialog.exec():
+            filename = dialog.selectedFiles()[0]
+            if filename:
+                if not self.is_file_open(filename):
+                    self.progress_bar.setVisible(True)
+                    self.thread = QThread()
+                    self.worker = self.uvozi_infotim_worker
+                    self.worker.moveToThread(self.thread)
+
+                    self.worker.progress.connect(self.update_progress)
+                    self.worker.status.connect(self.update_status)
+                    self.thread.started.connect(self.worker.uvoz(filename))
+                    self.worker.status.connect(lambda: self.thread.quit())
+                    self.thread.start()
+                    play_sound()
+                else:
+                    MsgBox("Najprej zapri datoteko " + filename)
+        # Uvozi vodomere iz excel izvižen iz infotim portala
+
+        filename = "d:/podatki/infotim-stevci.xlsx"
+        # filename = "d:/podatki/dev-infotim-prenos.xlsx"
+        # self.progress_bar.setVisible(True)
+        # self.thread = QThread()
+        # self.worker = self.uvozi_infotim_worker
+        # self.worker.moveToThread(self.thread)
+        #
+        # self.worker.progress.connect(self.update_progress)
+        # self.worker.status.connect(self.update_status)
+        # self.thread.started.connect(self.worker.uvoz(filename))
+        # self.worker.status.connect(lambda: self.thread.quit())
+        # self.thread.start()
+        play_sound()
+        #
+        # if not self.is_file_open(filename):
+        #     self.progress_bar.setVisible(True)
+        #     self.thread = QThread()
+        #     self.worker = self.uvozi_infotim_worker
+        #     self.worker.moveToThread(self.thread)
+        #
+        #     self.worker.progress.connect(self.update_progress)
+        #     self.worker.status.connect(self.update_status)
+        #     self.thread.started.connect(self.worker.uvoz(filename))
+        #     self.worker.status.connect(lambda: self.thread.quit())
+        #     self.thread.start()
+        #     play_sound()
+        # else:
+        #     MsgBox("Najprej zapri datoteko " + filename)
+        #
+        #     #
+        #     # filename = "d:/podatki/crp-01-07-2024.xlsx"
+        #     # self.hsmidcrp.hsmid_crp(filename)
 
     def dodaj_hsmid(self):
         # V Crp Excel dodaj polji za Hsmid in EIDHS

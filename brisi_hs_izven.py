@@ -45,8 +45,8 @@ class BrisiHs(Comm):
 
         # Izberi vse tri občine
         fc_selected = "obcina_selected"  # začasno zaradi brisanja
-        qry = f'"OB_MID"={vars.obcina_radgona} OR "OB_MID"={vars.obcina_apace} OR "OB_MID"={vars.obcina_radenci} OR "OB_MID"={vars.obcina_jurij}'
-        # qry = f'"OB_MID"={vars.obcina_radgona}' # Samo radgona
+        # qry = f'"OB_MID"={vars.obcina_radgona} OR "OB_MID"={vars.obcina_apace} OR "OB_MID"={vars.obcina_radenci} OR "OB_MID"={vars.obcina_jurij}'
+        qry = f'"OB_MID"={vars.obcina_radgona}'  # Samo radgona
         obcinaLayer = arcpy.MakeFeatureLayer_management(ob_fc, fc_selected)
         arcpy.SelectLayerByAttribute_management(obcinaLayer, "NEW_SELECTION", qry)
         cnt = arcpy.GetCount_management(obcinaLayer)

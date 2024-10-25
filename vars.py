@@ -30,13 +30,12 @@ msdbpass = "Pl@n3tSQL"
 msdbname = "Komunala_DB"
 
 # MYSQL baza
-mydbhost = "213.250.28.186"
+# mydbhost = "213.250.28.186"
+mydbhost = "localhost"
 mydbport = 3306
-# mydbuser = "dimec"
-# mydbpass = "6iXrN6J8@J"
-mydbuser = "bass"
-mydbpass = "qTKt7A3Le"
-mydbname = "radgona"
+mydbuser = "andrej"
+mydbpass = "Zima2022!"
+mydbname = "radgona_loc"
 
 # Razno
 verzija = "27.6.2024 py"

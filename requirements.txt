@@ -4,3 +4,5 @@ requests~=2.31.0
 mysql-connector-python~=9.0.0
 
 openpyxl~=3.0.10
+arcgis~=2.3.0
+pandas~=2.0.2

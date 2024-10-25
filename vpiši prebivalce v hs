@@ -1,0 +1,21 @@
+
+Preberi vse HS iz baze Arcgis v tabelo hs_tab  polja: eid>_hisna_stevilka, prebivalcev, stalno, zacasno
+Preberi CRP -> v tabelo crp_tab polja: hseid_st in hseid_zc 
+
+For hs in hs_tab
+	
+	for oseba in crp_tab
+		if oseba.hseid_st = hs.eid
+			stalno += 1
+			prebivalcev +=1
+
+		if oseba.hseid_zc = hs.eid
+			zacasno += 1
+			prebivalcev +=1
+
+
+for hs in hs_tab
+	find hs v bazi arcgis
+	update hs
+
+	

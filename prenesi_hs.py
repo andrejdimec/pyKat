@@ -1,3 +1,4 @@
+from PySide6.QtCore import Signal
 import arcpy
 from arcpy import env
 import vars
@@ -12,14 +13,16 @@ green = vars.darkGreen
 blue = vars.darkBlue
 err = vars.red
 
+# --- Production ---
 # Spodaj levo
 x1 = "15.7884"
 y1 = "46.5034"
-
 # Zgoraj desno
 x2 = "16.1062"
 y2 = "46.7325"
 
+
+# --- Test ---
 # # Spodaj levo
 # x1 = "15.9507"
 # y1 = "46.6806"
@@ -52,6 +55,8 @@ def stop(st):
 
 class HsArcgis(Comm):
     # env.workspace = vars.wkspace
+    progress = Signal(int)
+    status = Signal(str)
 
     def __init__(self, comm=Comm()):
         super(HsArcgis, self).__init__()
@@ -77,96 +82,105 @@ class HsArcgis(Comm):
             self.logc("Napaka pri brisanju." + str(e), err)
 
     def prenesi_hs(self):
-        hs_fc = "RPE\hisne_stevilke"
+        hs_fc = "RPE\Hisne_stevilke"
         env.workspace = vars.wkspace
         self.log("Workspace: " + str(env.workspace))
         self.log(f"Arcgis datoteka: {hs_fc}")
         start_time = time.time()
         self.presledek()
-        print("Prenesi hišne številke s portala Geoserver v Arcgis Pro")
+        # print("Prenesi hišne številke s portala Geoserver v Arcgis Pro")
+
         self.logc("Prenesi hišne številke s portala Geoserver v Arcgis Pro", green)
-        url = f"https://ipi.eprostor.gov.si/wfs-si-gurs-kn/ogc/features/collections/SI.GURS.KN:HISNE_STEVILKE/items?bbox={x1},{y1},{x2},{y2}&filter-lang=cql-text&additionalProp1"
-        self.presledek()
+        if arcpy.TestSchemaLock(hs_fc):
+            url = f"https://ipi.eprostor.gov.si/wfs-si-gurs-kn/ogc/features/collections/SI.GURS.KN:HISNE_STEVILKE/items?bbox={x1},{y1},{x2},{y2}&filter-lang=cql-text&additionalProp1"
+            self.presledek()
 
-        self.log("Prenašam hišne številke s portala...")
-        response = requests.get(url)
-        geojson_data = response.json()
-        # print(str(len(geojson_data)) + " zapisov")
+            self.log("Prenašam hišne številke s portala...")
+            response = requests.get(url)
+            geojson_data = response.json()
+            # print(str(len(geojson_data)) + " zapisov")
 
-        hisne_stevilke = []
+            hisne_stevilke = []
 
-        self.log("Pretvarjam koordinate v SLO 1996...")
-        for feature in geojson_data["features"]:
-            coords = feature["geometry"]["coordinates"]
-            x, y = convert_to_slovenia_grid(coords[1], coords[0])
-            # print("coord", coords, f"slo x {int(x)} y {int(y)}")
-            props = list(feature["properties"].values())
-            new_hs = (
-                (x, y),
-                props[0],
-                props[1],
-                props[2],
-                props[3],
-                props[4],
-                props[5],
-                props[6],
-                props[7],
-                props[8],
-                props[9],
-                props[10],
-                -9,
-                -9,
-                -9,
-                -9,
-                -9,
-            )
-            hisne_stevilke.append(new_hs)
-        novih_zapisov = len(hisne_stevilke)
-        # Shrani v ArcGis
-        fields = [
-            "SHAPE@XY",
-            "FEATUREID",
-            "EID_HISNA_STEVILKA",
-            "HS_STEVILKA",
-            "HS_DODATEK",
-            "EID_STAVBA",
-            "EID_NASELJE",
-            "EID_ULICA",
-            "TIP_TABLICE",
-            "EID_POSTNI_OKOLIS",
-            "DATUM_SYS",
-            "ST_HS",
-            "aglov",
-            "aglok",
-            "prebivalcev",
-            "stalno",
-            "zacasno",
-        ]
+            self.log("Pretvarjam koordinate v SLO 1996...")
+            for feature in geojson_data["features"]:
+                coords = feature["geometry"]["coordinates"]
+                x, y = convert_to_slovenia_grid(coords[1], coords[0])
+                # print("coord", coords, f"slo x {int(x)} y {int(y)}")
+                props = list(feature["properties"].values())
+                new_hs = (
+                    (x, y),
+                    props[0],
+                    props[1],
+                    props[2],
+                    props[3],
+                    props[4],
+                    props[5],
+                    props[6],
+                    props[7],
+                    props[8],
+                    props[9],
+                    props[10],
+                    -9,
+                    -9,
+                    -9,
+                    -9,
+                    -9,
+                )
+                hisne_stevilke.append(new_hs)
+            novih_zapisov = len(hisne_stevilke)
+            # Shrani v ArcGis
+            fields = [
+                "SHAPE@XY",
+                "FEATUREID",
+                "EID_HISNA_STEVILKA",
+                "HS_STEVILKA",
+                "HS_DODATEK",
+                "EID_STAVBA",
+                "EID_NASELJE",
+                "EID_ULICA",
+                "TIP_TABLICE",
+                "EID_POSTNI_OKOLIS",
+                "DATUM_SYS",
+                "ST_HS",
+                "aglov",
+                "aglok",
+                "prebivalcev",
+                "stalno",
+                "zacasno",
+            ]
 
-        starih_zapisov = arcpy.management.GetCount(hs_fc)
-        self.izprazni_fc(hs_fc)
-        self.log(rf"Shranjujem {novih_zapisov} hišnih številk v Arcgis Pro...")
-        edit = arcpy.da.Editor(env.workspace)
-        edit.startEditing(False, True)
+            starih_zapisov = arcpy.management.GetCount(hs_fc)
+            self.izprazni_fc(hs_fc)
+            self.log(rf"Shranjujem {novih_zapisov} hišnih številk v Arcgis Pro...")
+            edit = arcpy.da.Editor(env.workspace)
+            edit.startEditing(False, True)
+            stevec = 0
+            rows = len(hisne_stevilke)
+            # edit.startOperation()
+            for hs in hisne_stevilke:
+                try:
+                    edit.startOperation()
+                    with arcpy.da.InsertCursor(hs_fc, fields) as cursor:
+                        cursor.insertRow(hs)
+                except Exception as e:
+                    # self.napaka(e)
+                    self.logc("Napaka pri shranjevanju hišnih številk." + str(e), err)
+                finally:
+                    stevec += 1
+                    edit.stopOperation()
+                self.progress.emit(int(stevec / rows * 100))
+                # self.status.emit(f"{stevec} / {rows}")
+            # edit.stopOperation()
+            edit.stopEditing(True)
+            razlika = novih_zapisov - int(starih_zapisov[0])
+            self.presledek()
 
-        for hs in hisne_stevilke:
-            try:
-                edit.startOperation()
-                with arcpy.da.InsertCursor(hs_fc, fields) as cursor:
-                    cursor.insertRow(hs)
-            except Exception as e:
-                # self.napaka(e)
-                self.logc("Napaka pri shranjevanju hišnih številk." + str(e), err)
-            finally:
-                edit.stopOperation()
-
-        edit.stopEditing(True)
-        razlika = novih_zapisov - int(starih_zapisov[0])
-        self.presledek()
-
-        self.log(f"Prejšnje stanje: {starih_zapisov} hišnih številk.")
-        self.log(f"Novo stanje: {novih_zapisov} hišnih številk.")
-        self.log(f"Razlika: {razlika} hišnih številk.")
-        self.presledek()
-        minutes, seconds = stop(start_time)
-        self.logc(f"Končano v {minutes} min {seconds} sek.", blue)
+            self.log(f"Prejšnje stanje: {starih_zapisov} hišnih številk.")
+            self.log(f"Novo stanje: {novih_zapisov} hišnih številk.")
+            self.log(f"Razlika: {razlika} hišnih številk.")
+            self.presledek()
+            minutes, seconds = stop(start_time)
+            self.logc(f"Končano v {minutes} min {seconds} sek.", blue)
+        else:
+            self.log(f"Error: datoteka {hs_fc} je zaklenjena", err)

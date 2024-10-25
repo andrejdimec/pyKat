@@ -112,11 +112,11 @@ class Ui_MainWindow(object):
         self.textEdit_2.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_hs_aglo = QPushButton(self.frame_2)
         self.btn_hs_aglo.setObjectName(u"btn_hs_aglo")
-        self.btn_hs_aglo.setGeometry(QRect(10, 140, 131, 40))
+        self.btn_hs_aglo.setGeometry(QRect(10, 190, 131, 40))
         self.btn_hs_aglo.setMinimumSize(QSize(100, 40))
         self.textEdit_3 = QTextEdit(self.frame_2)
         self.textEdit_3.setObjectName(u"textEdit_3")
-        self.textEdit_3.setGeometry(QRect(150, 140, 271, 41))
+        self.textEdit_3.setGeometry(QRect(150, 190, 271, 41))
         self.textEdit_3.setFont(font1)
         self.textEdit_3.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_3.setFrameShadow(QFrame.Shadow.Sunken)
@@ -132,33 +132,33 @@ class Ui_MainWindow(object):
         self.textEdit_4.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_brisi_hs = QPushButton(self.frame_2)
         self.btn_brisi_hs.setObjectName(u"btn_brisi_hs")
-        self.btn_brisi_hs.setGeometry(QRect(10, 190, 131, 40))
+        self.btn_brisi_hs.setGeometry(QRect(10, 140, 131, 40))
         self.btn_brisi_hs.setMinimumSize(QSize(100, 40))
         self.textEdit_5 = QTextEdit(self.frame_2)
         self.textEdit_5.setObjectName(u"textEdit_5")
-        self.textEdit_5.setGeometry(QRect(150, 190, 271, 41))
+        self.textEdit_5.setGeometry(QRect(150, 140, 271, 41))
         self.textEdit_5.setFont(font1)
         self.textEdit_5.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_5.setFrameShadow(QFrame.Shadow.Sunken)
         self.textEdit_6 = QTextEdit(self.frame_2)
         self.textEdit_6.setObjectName(u"textEdit_6")
-        self.textEdit_6.setGeometry(QRect(150, 240, 271, 41))
+        self.textEdit_6.setGeometry(QRect(150, 290, 271, 41))
         self.textEdit_6.setFont(font1)
         self.textEdit_6.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_6.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_preb = QPushButton(self.frame_2)
         self.btn_preb.setObjectName(u"btn_preb")
-        self.btn_preb.setGeometry(QRect(10, 240, 131, 40))
+        self.btn_preb.setGeometry(QRect(10, 290, 131, 40))
         self.btn_preb.setMinimumSize(QSize(100, 40))
         self.textEdit_7 = QTextEdit(self.frame_2)
         self.textEdit_7.setObjectName(u"textEdit_7")
-        self.textEdit_7.setGeometry(QRect(150, 290, 271, 41))
+        self.textEdit_7.setGeometry(QRect(150, 240, 271, 41))
         self.textEdit_7.setFont(font1)
         self.textEdit_7.setFrameShape(QFrame.Shape.NoFrame)
         self.textEdit_7.setFrameShadow(QFrame.Shadow.Sunken)
         self.btn_hsmid_crp = QPushButton(self.frame_2)
         self.btn_hsmid_crp.setObjectName(u"btn_hsmid_crp")
-        self.btn_hsmid_crp.setGeometry(QRect(10, 290, 131, 40))
+        self.btn_hsmid_crp.setGeometry(QRect(10, 240, 131, 40))
         self.btn_hsmid_crp.setMinimumSize(QSize(100, 40))
         self.btn_infotim = QPushButton(self.frame_2)
         self.btn_infotim.setObjectName(u"btn_infotim")
@@ -300,7 +300,7 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Odjemna mesta iz Bass prenesi v ArcGis</p></body></html>", None))
-        self.btn_hs_aglo.setText(QCoreApplication.translate("MainWindow", u"Aglo -> Hs", None))
+        self.btn_hs_aglo.setText(QCoreApplication.translate("MainWindow", u"Aglo -> H\u0160", None))
         self.textEdit_3.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -318,7 +318,7 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">S portala Geoserver prenesi nove hi\u0161ne \u0161tevilke in jih shrani v kataster</p></body></html>", None))
-        self.btn_brisi_hs.setText(QCoreApplication.translate("MainWindow", u"Bri\u0161i H\u0160", None))
+        self.btn_brisi_hs.setText(QCoreApplication.translate("MainWindow", u"Bri\u0161i odve\u010dne H\u0160", None))
         self.textEdit_5.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -335,7 +335,7 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Inter'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">V datoteko s H\u0160 vpi\u0161i \u0161tevilo prebivalcev iz CRP Excel (polja: hsmid,stalno, zacasno)</p></body></html>", None))
-        self.btn_preb.setText(QCoreApplication.translate("MainWindow", u"Prebivalci v H\u0160", None))
+        self.btn_preb.setText(QCoreApplication.translate("MainWindow", u"Prebivalci -> H\u0160", None))
         self.textEdit_7.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

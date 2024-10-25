@@ -1,31 +1,19 @@
 import arcpy
 from arcpy import env
 import os
-from pathlib import Path
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QMessageBox
-
-from openpyxl import load_workbook
-import csv
-
 import vars
 import time
 from logger import Logger
 from comm import Comm
 import pandas as pd
 
-
-# import geopandas
-
 black = vars.black
 red = vars.darkRed
 green = vars.darkGreen
 blue = vars.darkBlue
 err = vars.red
-
-hs_fc = r"RPE\hisne_stevilke"
-na_fc = r"RPE\NA_2024"
-ul_fc = r"RPE\UL_2024"
 
 
 class MsgBox(QMessageBox):
@@ -78,6 +66,19 @@ class UvoziInfotim(Comm):
         super(UvoziInfotim, self).__init__()
         self.comm = comm
         self.logger = Logger(comm=self.comm)
+
+    def napaka(self, e):
+        self.presledek()
+        self.logc("Napaka! " + str(e), err)
+
+    def log(self, in_str):
+        self.logger.izpisi(in_str, black)
+
+    def logc(self, in_str, barva):
+        self.logger.izpisi(in_str, barva)
+
+    def presledek(self):
+        self.log("\n")
 
     def uvoz(self, filename):
         # filename = "d:/podatki/test.xlsx"
@@ -158,20 +159,6 @@ class UvoziInfotim(Comm):
 
     def izprazni_fc(self, fc):
         try:
-            # self.log("Praznim datoteko " + str(fc))
             arcpy.management.DeleteRows(fc)
         except Exception as e:
             self.napaka(e)
-
-    def napaka(self, e):
-        self.presledek()
-        self.logc("Napaka! " + str(e), err)
-
-    def log(self, in_str):
-        self.logger.izpisi(in_str, black)
-
-    def logc(self, in_str, barva):
-        self.logger.izpisi(in_str, barva)
-
-    def presledek(self):
-        self.log("\n")
